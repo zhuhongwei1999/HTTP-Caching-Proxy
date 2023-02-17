@@ -34,13 +34,23 @@ ClientRequest parse_client_request(const char* buffer, int buffer_len) {
   size_t pos1 = message.find(' ');
   size_t pos2 = message.find(' ', pos1 + 1);
   request.method = message.substr(0, pos1);
-  request.path = message.substr(pos1 + 1, pos2 - pos1 - 1);
+  std::string url = message.substr(pos1 + 1, pos2 - pos1 - 1);
+  size_t colon_pos = url.find(":");
+  request.path = url.substr(0, colon_pos);
+  if (colon_pos != std::string::npos) {
+    request.port = std::stoi(url.substr(colon_pos + 1));
+  } 
+  else {
+    request.port = 80;
+  }
   request.protocol = message.substr(pos2 + 1, message.find("\r\n") - pos2 - 1);
 
   // find the Host header and extract the host name
   size_t pos = message.find("Host: ");
   if (pos != std::string::npos) {
-    request.ip_addr = message.substr(pos + 6, message.find("\r\n", pos) - pos - 6);
+    std::string host = message.substr(pos + 6, message.find("\r\n", pos) - pos - 6);
+    size_t colon_pos = host.find(":");
+    request.host = url.substr(0, colon_pos);
   }
 
   // find the end of the headers section and extract all headers
@@ -85,7 +95,7 @@ bool is_valid_http_request(const char* buffer, int buffer_len) {
   if (!(req_line >> method >> path >> protocol)) {
     return false; // invalid request line format
   }
-  if (method != "GET" && method != "POST" && method != "CONNECT" && method != "PUT" && method != "DELETE") {
+  if (method != "GET" && method != "POST" && method != "CONNECT") {
     return false; // invalid request method
   }
   if (path.empty()) {
@@ -112,11 +122,12 @@ bool is_valid_http_request(const char* buffer, int buffer_len) {
 
 int connect_to_server(const ClientRequest & request) {
   struct addrinfo hints;
+  struct addrinfo * server_info_list;
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
-  struct addrinfo * server_info_list;
-  const char * remote_server_hostname = request.ip_addr.c_str();
+  
+  const char * remote_server_hostname = request.host.c_str();
   const char * remote_server_port = std::to_string(request.port).c_str();
   if (getaddrinfo(remote_server_hostname, remote_server_port, &hints, &server_info_list) != 0) {
     error("remote server getaddrinfo error!");
@@ -130,4 +141,26 @@ int connect_to_server(const ClientRequest & request) {
   }
   freeaddrinfo(server_info_list);
   return remote_server_fd;
+}
+
+void sentback_request_page(int client_fd, File *resource){
+  char buf[1024];
+  fgets(buf, sizeof(buf), resource);
+  while(!feof(resource)){
+    int len = write(client_fd, buf, strlen(buf));
+    if(len < 0){
+      error("Sent back request page fail.\n");
+    }
+    fgets(buf, sizeof(buf), resource);
+  }
+}
+
+void not_found(int client_fd){
+  //return 404 to client
+  //needs change to c++
+  const char * reply404 = "Some content 404\n";
+  int len = write(client_fd, reply404, strlen(reply404));
+  if(len < 0) {
+    error("Reply 404 error.\n");
+  }
 }
