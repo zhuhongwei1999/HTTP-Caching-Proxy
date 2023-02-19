@@ -1,4 +1,5 @@
 #include "utils.h"
+
 void error(const char* message) {
   std::cerr << message << std::endl;
   exit(EXIT_FAILURE);
@@ -29,18 +30,21 @@ int get_port_num(int socket_fd) {
 ClientRequest parse_client_request(const char* buffer, int buffer_len) {
   ClientRequest request;
   std::string message(buffer, buffer_len);
-
   // find the first line and split it into three parts
+  request.msg = message;
   size_t pos1 = message.find(' ');
   size_t pos2 = message.find(' ', pos1 + 1);
   request.method = message.substr(0, pos1);
   std::string url = message.substr(pos1 + 1, pos2 - pos1 - 1);
-  size_t colon_pos = url.find(":");
-  request.path = url.substr(0, colon_pos);
-  if (colon_pos != std::string::npos) {
-    request.port = std::stoi(url.substr(colon_pos + 1));
-  } 
+  if (request.method == "CONNECT") {
+    size_t colon_pos = url.find(":");
+    request.path = url.substr(0, colon_pos);
+    if (colon_pos != std::string::npos) {
+      request.port = std::stoi(url.substr(colon_pos + 1));
+    }
+  }
   else {
+    request.path = url;
     request.port = 80;
   }
   request.protocol = message.substr(pos2 + 1, message.find("\r\n") - pos2 - 1);
@@ -50,7 +54,7 @@ ClientRequest parse_client_request(const char* buffer, int buffer_len) {
   if (pos != std::string::npos) {
     std::string host = message.substr(pos + 6, message.find("\r\n", pos) - pos - 6);
     size_t colon_pos = host.find(":");
-    request.host = url.substr(0, colon_pos);
+    request.host = host.substr(0, colon_pos);
   }
 
   // find the end of the headers section and extract all headers
@@ -143,16 +147,20 @@ int connect_to_server(const ClientRequest & request) {
   return remote_server_fd;
 }
 
-void sentback_request_page(int client_fd, File *resource){
-  char buf[1024];
-  fgets(buf, sizeof(buf), resource);
-  while(!feof(resource)){
-    int len = write(client_fd, buf, strlen(buf));
-    if(len < 0){
-      error("Sent back request page fail.\n");
+void sentback_request_page(ClientRequest client_request, std::fstream resource, int client_fd){
+  char buffer[1024];
+  if (resource.get(buffer, 1024)){
+    int len = write(client_fd, buffer, strlen(buffer));
     }
-    fgets(buf, sizeof(buf), resource);
-  }
+  // char buf[1024];
+  // fgets(buf, sizeof(buf), resource);
+  // while(!feof(resource)){
+  //   int len = write(client_fd, buf, strlen(buf));
+  //   if(len < 0){
+  //     error("Sent back request page fail.\n");
+  //   }
+  //   fgets(buf, sizeof(buf), resource);
+  // }
 }
 
 void not_found(int client_fd){

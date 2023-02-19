@@ -1,6 +1,5 @@
 #define BACKLOG 200
-
-using namespace std;
+#include "utils.h"
 
 class proxy {
 private:
@@ -10,5 +9,5 @@ public:
   proxy(const char * myport) : port_num(myport) {}
   void run();
   void handleConnect(int client_fd, int server_fd);
-  void handleGet(int client_fd);
+  void handleGet(ClientRequest clinet_request, int client_fd, int server_fd);
 };

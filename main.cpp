@@ -7,7 +7,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "proxy.h"
-#include "utils.h"
 
 int main() {
   const char * port = "12345";

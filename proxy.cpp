@@ -6,7 +6,11 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <algorithm>
-#include "utils.h"
+#include <sys/stat.h>
+#include <fstream>
+#include "cache.h"
+
+Cache cache;
 
 void proxy::run() {
   int status;
@@ -15,7 +19,7 @@ void proxy::run() {
   struct addrinfo host_info;
   struct addrinfo *host_info_list;
   const char *hostname = NULL;
-  const char *port_num     = "666";
+  const char *port_num = "12345";
 
   
   // struct sockaddr_in server_address;
@@ -25,9 +29,8 @@ void proxy::run() {
   host_info.ai_family   = AF_UNSPEC;  //allow IPv4 & IPv6   
   host_info.ai_socktype = SOCK_STREAM;//TCP
   host_info.ai_flags    = AI_PASSIVE;
-  hints.ai_protocol     = 0;  
 
-  if (getaddrinfo(hostname, port_num, &hints, &host_info_list) != 0) {
+  if (getaddrinfo(hostname, port_num, &host_info, &host_info_list) != 0) {
       error("getaddrinfo error!");
   }
   server_fd = socket(host_info_list->ai_family, 
@@ -47,14 +50,14 @@ void proxy::run() {
   }
   freeaddrinfo(host_info_list);
   // Accept
-  while (done) {
+  while (true) {
     struct sockaddr_storage client_addr;
     socklen_t socket_addr_len = sizeof(client_addr);
     client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &socket_addr_len);
     if (client_fd == -1) {
-      error("Server accept clinet socket error!");
+      error("Server accept client socket error!");
     }
-    cout<<"Server accept client success.\n";
+    std::cout<<"Server accept client success.\n";
 
     int id = 0;
     std::string client_ip = get_ip_address(client_fd);
@@ -72,10 +75,93 @@ void proxy::run() {
       if (client_request.method == "CONNECT") {
         handleConnect(client_fd, remote_server_fd);
       }else if(client_request.method == "GET"){
-        handleGet(client_fd);
+        handleGet(client_request, client_fd, remote_server_fd);
+      }else if(client_request.method == "POST"){
+        //handlePost();
       }
     }
   }
+}
+
+void proxy::handleGet(ClientRequest client_request, int client_fd, int server_fd) {
+  //needs cache
+  send(server_fd, client_request.msg.c_str(), strlen(client_request.msg.c_str()), 0);
+  char buffer[65536] = {0};
+  int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
+  std::string response_msg(buffer);
+  ServerResponse server_response(response_msg);
+  if (server_response.headers.count("Transfer-Encoding") && server_response.headers["Transfer-Encoding"] == "chunked") {
+    std::string chunk_size_str;
+    std::string chunk_data;
+    int chunk_size = 0;
+    int total_size = 0;
+    while (true) {
+      // Read chunk size
+      chunk_size_str.clear();
+      while (true) {
+        char c;
+        recv(server_fd, &c, 1, 0);
+        if (c == '\r') {
+          recv(server_fd, &c, 1, 0);
+          break;
+        }
+        chunk_size_str += c;
+      }
+      chunk_size = std::stoi(chunk_size_str);
+      if (chunk_size == 0) {
+        // Last chunk
+        break;
+      }
+      // Read chunk data
+      chunk_data.resize(chunk_size);
+      int bytes_received = 0;
+      while (bytes_received < chunk_size) {
+        int len = recv(server_fd, &chunk_data[bytes_received], chunk_size - bytes_received, 0);
+        if (len <= 0) {
+          break;
+        }
+        bytes_received += len;
+      }
+      total_size += bytes_received;
+      // Read trailing CRLF after chunk
+      char buf[2];
+      recv(server_fd, buf, 2, 0);
+      // Send chunk to client
+      send(client_fd, chunk_data.c_str(), chunk_data.size(), 0);
+    }
+    response_len = recv(server_fd, buffer, sizeof(buffer), 0);
+    send(client_fd, buffer, response_len, 0);
+  }
+  else {
+    if (server_response.isCacheable()) {
+      cache.cacheResponse(client_request.headers[0], server_response);
+    }
+
+    send(client_fd, buffer, sizeof(buffer), 0);
+  }
+  
+  return;
+
+  // struct stat st;
+  // std::string path = client_request.path;
+  // if(stat(path.c_str(), &st) == -1){
+  //   not_found(client_fd);
+  // }else{
+  //   std::fstream resource;
+  //   resource.open(path.c_str());
+  //  // File * resource = NULL;
+  //   //resource = fopen(path, "r");
+  //   if(!resource){
+  //     not_found(client_fd);
+  //   }
+  //   char buffer[1024];
+  //   if (resource.get(buffer, 1024)){
+  //     int len = write(client_fd, buffer, strlen(buffer));
+  //   }
+  //   //sentback_request_page(client_request, resource, client_fd);
+  //   resource.close();
+  // }
+  
 }
 
 void proxy::handleConnect(int client_fd, int server_fd) {
@@ -95,25 +181,11 @@ void proxy::handleConnect(int client_fd, int server_fd) {
         len = recv(fd[i], message, sizeof(message), 0);
         if (len < 0) return;
         else {
-          if (send(fd[i - 1], message, len, 0) <= 0) return;
+          if (send(fd[1 - i], message, len, 0) <= 0) return;
         }
       }
     }
   }
 }
 
-void proxy::handleGet(int client_fd){
-  struct stat st;
-  string path = client_fd.path;
-  if(stat(path, &st) == -1){
-    not_found(client_fd);
-  }else{
-    File * resource = NULL;
-    resource = fopen(path, "r");
-    if(resource == NULL){
-      not_found(client_fd);
-    }
-    sentback_request_page(client_fd, resource);
-    fclose(resource);
-  }
-}
+
