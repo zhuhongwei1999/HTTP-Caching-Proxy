@@ -3,6 +3,9 @@
 #include <map>
 #include <ctime>
 
+#ifndef SERVER_RESPONSE_H
+#define SERVER_RESPONSE_H
+
 class ServerResponse {
   public:
     int status_code;
@@ -24,4 +27,7 @@ class ServerResponse {
     }
     bool isCacheable();
     std::time_t parse_date(const std::string & date_str);
+    std::time_t parse_max_age();
 };
+
+#endif

@@ -44,9 +44,9 @@ bool ServerResponse::isCacheable() {
     if (it->second == "no-store") return false;
     if (it->second.find("max-age=") != std::string::npos) {
       size_t eq_pos = it->second.find('=');
-      std::string max_age = it->second.substr(eq_pos);
+      std::string max_age = it->second.substr(eq_pos + 1);
       if (max_age == "0") return false;
-    } 
+    }
   }
   it = headers.find("Expires");
   if (it != headers.end()) {
@@ -65,4 +65,17 @@ std::time_t ServerResponse::parse_date(const std::string& date_str) {
   } else {
     return std::mktime(&tm);
   }
+}
+
+std::time_t ServerResponse::parse_max_age() {
+  if (headers.count("Cache-Control")) {
+    std::string cache_control = headers["Cache-Control"];
+    if (cache_control.find("max-age=") != std::string::npos) {
+      size_t eq_pos = cache_control.find('=');
+      std::string max_age = cache_control.substr(eq_pos + 1);
+      int max_age_sec = std::stoi(max_age);
+      return max_age_sec;
+    }
+  }
+  return -1;
 }

@@ -2,6 +2,9 @@
 #include <vector>
 #include <map>
 
+#ifndef CLIENT_REQUEST_H
+#define CLIENT_REQUEST_H
+
 class ClientRequest {
   public:
     int id;
@@ -13,3 +16,4 @@ class ClientRequest {
     int port;
     std::string host;
 };
+#endif

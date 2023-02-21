@@ -1,7 +1,14 @@
 #include <unordered_map>
+#include <list>
 #include "server.h"
 
 class Cache {
+   private:
+    std::unordered_map<std::string, ServerResponse> cache_item;
+    std::list<std::pair<std::string, ServerResponse> > cache_list;
+    size_t max_size;
+    size_t size;
+
   public:
     void cacheResponse(const std::string & request, const ServerResponse & response) {
       cache_item[request] = response;
@@ -19,6 +26,5 @@ class Cache {
       return cache_item.empty();
     }
     
-  private:
-    std::unordered_map<std::string, ServerResponse> cache_item;
+ 
 };
