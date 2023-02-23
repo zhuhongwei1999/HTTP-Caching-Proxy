@@ -188,7 +188,7 @@ std::string getCurrentTime() {
 }
 
 void checkLogFile(std::ofstream &logFile){
-  if (logFile.is_open()) {
+  if(logFile.is_open()) {
         logFile << "This is a test log message." << std::endl;
         if (logFile.good()) {
             // Writing to the log file was successful
@@ -198,7 +198,7 @@ void checkLogFile(std::ofstream &logFile){
             std::cerr << "Error writing to log file." << std::endl;
         }
         logFile.close();
-    } else {
+  }else{
         std::cerr << "Error opening log file." << std::endl;
-    }
+  }
 }

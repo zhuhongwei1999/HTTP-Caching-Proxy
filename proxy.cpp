@@ -15,7 +15,8 @@
 
 Cache cache;
 int id = 0;
-std::ofstream logFile("/var/log/erss/proxy.log");
+std::ofstream logFile("proxy.log");///var/log/erss/
+
 void proxy::run() {
   checkLogFile(logFile);
   int status;
