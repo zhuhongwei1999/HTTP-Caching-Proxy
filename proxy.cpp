@@ -15,8 +15,9 @@
 
 Cache cache;
 int id = 0;
-
+std::ofstream logFile("/var/log/erss/proxy.log");
 void proxy::run() {
+  checkLogFile(logFile);
   int status;
   int server_fd, client_fd;
   int done = 1;
@@ -78,12 +79,14 @@ void * proxy::handle_client(void * arg) {
   bool is_valid_request = is_valid_http_request(buffer, buffer_len);
   if (!is_valid_request) {
     std::cerr << "Invalid request!" << std::endl;
-    notFound404(client_fd);
     return NULL;
   }
   else {
     ClientRequest client_request = parse_client_request(buffer, buffer_len);
     client_request.id = id;
+    //client_request.printClientRequest();
+    logFile << client_request.id <<": \""<<client_request.headers[0]
+            <<"\" from"<<client_request.port<<" @ "<<getCurrentTime()<<endl;
     id++;
     int remote_server_fd = connect_to_server(client_request);
     if (client_request.method == "CONNECT") {

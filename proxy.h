@@ -2,6 +2,9 @@
 #include "client.h"
 #include "server.h"
 
+extern std::ofstream logFile;
+
+
 class proxy {
 private:
   const char * port_num = "12345";

@@ -71,7 +71,6 @@ ClientRequest parse_client_request(const char* buffer, int buffer_len) {
       start = end + 2;
     }
   }
-
   return request;
 }
 
@@ -176,4 +175,30 @@ void badGateway502(int client_fd){
   if(int len = send(client_fd, notFound404, strlen(notFound404), 0) < 0){
     error("Reply 502 error.\n");
   }
+}
+
+std::string getCurrentTime() {
+  std::time_t now = std::time(nullptr);
+  // Convert to a struct tm object
+  std::tm* timeinfo = std::localtime(&now);
+  // Format the time string
+  char time_str[80];
+  std::strftime(time_str, 80, "%a %b %d %H:%M:%S %Y", timeinfo);
+  return string(time_str);
+}
+
+void checkLogFile(std::ofstream &logFile){
+  if (logFile.is_open()) {
+        logFile << "This is a test log message." << std::endl;
+        if (logFile.good()) {
+            // Writing to the log file was successful
+            std::cout << "Successfully wrote to log file." << std::endl;
+        } else {
+            // Writing to the log file failed
+            std::cerr << "Error writing to log file." << std::endl;
+        }
+        logFile.close();
+    } else {
+        std::cerr << "Error opening log file." << std::endl;
+    }
 }

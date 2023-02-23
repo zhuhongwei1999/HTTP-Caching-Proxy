@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <ctime>
 #include "client.h"
 
 void error(const char* message);
@@ -20,3 +21,6 @@ int connect_to_server(const ClientRequest & request);
 void sentback_request_page(ClientRequest client_request, std::fstream resource, int client_fd);
 void notFound404(int client_fd);
 void badGatway502(int cliend_fd);
+string getCurrentTime();
+void checkLogFile(std::ofstream &logFile);
+
