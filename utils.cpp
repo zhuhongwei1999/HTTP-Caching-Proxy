@@ -163,12 +163,17 @@ void sentback_request_page(ClientRequest client_request, std::fstream resource, 
   // }
 }
 
-void not_found(int client_fd){
-  //return 404 to client
-  //needs change to c++
-  const char * reply404 = "Some content 404\n";
-  int len = write(client_fd, reply404, strlen(reply404));
-  if(len < 0) {
+void notFound404(int client_fd){
+  const char * notFound404 = "HTTP/1.1 404 Not Found\n";
+  if(int len = send(client_fd, notFound404, strlen(notFound404), 0) < 0){
     error("Reply 404 error.\n");
+  }
+}
+
+
+void badGateway502(int client_fd){
+  const char * notFound404 = "HTTP/1.1 502 Bad Gateway\n";
+  if(int len = send(client_fd, notFound404, strlen(notFound404), 0) < 0){
+    error("Reply 502 error.\n");
   }
 }

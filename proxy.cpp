@@ -78,6 +78,7 @@ void * proxy::handle_client(void * arg) {
   bool is_valid_request = is_valid_http_request(buffer, buffer_len);
   if (!is_valid_request) {
     std::cerr << "Invalid request!" << std::endl;
+    notFound404(client_fd);
     return NULL;
   }
   else {
