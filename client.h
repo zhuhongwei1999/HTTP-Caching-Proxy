@@ -24,7 +24,7 @@ class ClientRequest {
       for(int i = 0; i < headers.size(); i++){
         cout<<"header: "<<headers[i]<<endl;
       }
-      cout<<"msg: "<<msg<<endl;
+      cout<<"msg:\n"<<msg<<endl;
       cout<<"hostname: "<<host<<" port:"<<port<<endl;
     }
 };

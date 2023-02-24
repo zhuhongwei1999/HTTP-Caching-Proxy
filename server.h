@@ -9,9 +9,11 @@
 class ServerResponse {
   public:
     int status_code;
+    std::string response_line;
     std::map<std::string, std::string> headers;
     std::string body;
     std::string message;
+    
   public:
     ServerResponse() = default;
     ServerResponse(const std::string & response_msg);
@@ -25,7 +27,7 @@ class ServerResponse {
       }
       return *this;
     }
-    bool isCacheable();
+    bool isCacheable(int client_id);
     std::time_t parse_date(const std::string & date_str);
     std::time_t parse_max_age();
 };

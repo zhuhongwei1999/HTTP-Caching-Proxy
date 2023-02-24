@@ -20,8 +20,8 @@ bool is_valid_http_request(const char* buffer, int buffer_len);
 ClientRequest parse_client_request(const char* buffer, int buffer_len);
 int connect_to_server(const ClientRequest & request);
 void sentback_request_page(ClientRequest client_request, std::fstream resource, int client_fd);
-void notFound404(int client_fd);
-void badGatway502(int cliend_fd);
+void notFound404(int client_fd, int client_id);
+void badGatway502(int cliend_fd, int client_id);
 string getCurrentTime();
 void checkLogFile(std::ofstream &logFile);
 

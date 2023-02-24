@@ -5,6 +5,7 @@ ServerResponse::ServerResponse(const std::string & response_msg) {
   message = response_msg;
   std::vector<std::string> lines = split_response(response_msg, "\r\n");
   if (lines.empty()) return;
+  response_line = lines[0];
   std::vector<std::string> status_line = split_response(lines[0], " ");
   if (status_line.size() < 2) return;
   status_code = std::stoi(status_line[1]);
@@ -34,24 +35,31 @@ std::vector<std::string> ServerResponse::split_response(const std::string & s, c
   return tokens;
 }
 
-bool ServerResponse::isCacheable() {
+bool ServerResponse::isCacheable(int client_id) {
   if (status_code != 200) {
     return false;
   }
   std::map<std::string, std::string>::iterator it;
   it = headers.find("Cache-Control");
   if (it != headers.end()) {
-    if (it->second == "no-store") return false;
+    if (it->second == "no-store"){
+      cout<<client_id<<": not cacheable because the response must not be cached in any form."<<endl;
+      return false;
+    }
     if (it->second.find("max-age=") != std::string::npos) {
       size_t eq_pos = it->second.find('=');
       std::string max_age = it->second.substr(eq_pos + 1);
-      if (max_age == "0") return false;
+      if (max_age == "0"){
+        cout<<client_id<<": not cacheable because the the response should not be cached for client to ensure that it has the latest version."<<endl;
+        return false;
+      }
     }
   }
   it = headers.find("Expires");
   if (it != headers.end()) {
     std::time_t expiration_time = parse_date(it->second);
     if (expiration_time <= std::time(NULL)) {
+      cout<<client_id<<": not cacheable because the the response expired."<<endl;
       return false;
     }
   }

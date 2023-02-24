@@ -1,6 +1,8 @@
 #include <unordered_map>
 #include <list>
+#include <iostream>
 #include "server.h"
+using namespace std;
 
 class Cache {
    private:
@@ -10,7 +12,11 @@ class Cache {
     size_t size;
 
   public:
-    void cacheResponse(const std::string & request, const ServerResponse & response) {
+    void cacheResponse(const std::string & request, ServerResponse & response, int client_id) {
+      auto it = response.headers.find("Expires");
+      std::time_t time = response.parse_date(it->second);
+      cout<<client_id<<": cached, expires at "<<time<<endl;
+      cout<<client_id<<": cached, but requires re-validation"<<endl;
       cache_item[request] = response;
     }
 

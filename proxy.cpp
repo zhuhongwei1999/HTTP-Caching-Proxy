@@ -86,8 +86,10 @@ void * proxy::handle_client(void * arg) {
     ClientRequest client_request = parse_client_request(buffer, buffer_len);
     client_request.id = id;
     //client_request.printClientRequest();
-    logFile << client_request.id <<": \""<<client_request.headers[0]
-            <<"\" from"<<client_request.port<<" @ "<<getCurrentTime()<<endl;
+    // logFile << client_request.id <<": \""<<client_request.headers[0]
+    //         <<"\" from"<<client_request.port<<" @ "<<getCurrentTime()<<endl;
+    cout << client_request.id <<": \""<<client_request.headers[0]
+            <<"\" from "<<client_request.port<<" @ "<<getCurrentTime()<<endl;
     id++;
     int remote_server_fd = connect_to_server(client_request);
     if (client_request.method == "CONNECT") {
@@ -105,23 +107,29 @@ void proxy::handleGet(ClientRequest client_request, int client_fd, int server_fd
   ServerResponse response;
   bool in_cache = cache.getCachedResponse(client_request.headers[0], response);
   if (in_cache) {
-    std::cout << "in cache" << std::endl;
+    std::cout << "Test: in cache" << std::endl;
     revalidateCachedResponse(client_request, client_fd, server_fd, response);
     return;
   }
+  //logFile
+  cout<<client_request.id<<": not in cache"<<endl;
   send(server_fd, client_request.msg.c_str(), strlen(client_request.msg.c_str()), 0);
+  //logFile
+  cout<<client_request.id<<": Requesting \""<<client_request.headers[0]<<"\" from "<<client_request.host<<endl;
   char buffer[65536] = {0};
   int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
   std::string response_msg(buffer);
   ServerResponse server_response(response_msg);
+   //logFile
+  cout<<client_request.id<<": Received \""<<server_response.response_line<<"\" from "<<client_request.host<<endl;
   if (server_response.headers.count("Transfer-Encoding") && server_response.headers["Transfer-Encoding"] == "chunked") {
     std::string response_body;
     response_body = handleChunkMessage(server_fd, buffer, strlen(buffer));
     send(client_fd, response_msg.c_str(), response_msg.size(), 0);
   }
   else {
-    if (server_response.isCacheable()) {
-      cache.cacheResponse(client_request.headers[0], server_response);
+    if (server_response.isCacheable(client_request.id)) {
+      cache.cacheResponse(client_request.headers[0], server_response, client_request.id);
     }
     send(client_fd, buffer, sizeof(buffer), 0);
   }
@@ -167,6 +175,10 @@ void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd
   if ((max_age >= 0 && current_time > cached_response.parse_date(cached_response.headers["Date"]) + max_age) || 
       (cached_response.headers.count("Cache-Control") && cached_response.headers["Cache-Control"] == "no-cache")) {
     // The cached response has expired, revalidate it with the server.
+    //logFile
+    auto it = cached_response.headers.find("Expires");
+    std::time_t time = cached_response.parse_date(it->second);
+    cout<<client_request.id<<": in cache, but expired at "<<time<<endl;//can expires use here?
     ClientRequest revalidation_request = client_request;
     if (cached_response.headers.count("ETag")) {
       revalidation_request.headers.push_back("If-None-Match: " + cached_response.headers["ETag"]);
@@ -175,23 +187,30 @@ void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd
     }
     // Send the revalidation request to the server.
     send(server_fd, revalidation_request.msg.c_str(), strlen(revalidation_request.msg.c_str()), 0);
+    //logFile
+    cout<<client_request.id<<": Requesting \""<<client_request.headers[0]<<"\" from "<<client_request.host<<endl;
     char buffer[65536] = {0};
     int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
     std::string response_msg(buffer);
     ServerResponse revalidation_response(response_msg);
+    //logFile
+    cout<<client_request.id<<": Received \""<<revalidation_response.response_line<<"\" from "<<client_request.host<<endl;
     if (revalidation_response.status_code == 304) {
       // The cached response is still valid.
-      std::cout << "cached response is still valid" << std::endl;
+      //logFile
+      cout<<client_request.id<<": in cache, valid"<<endl;
       send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
     } else {
       // The cached response is not valid, replace it with the new response.
-      std::cout << "cached response is not valid, replacing" << std::endl;
+      //std::cout << "Test: cached response is not valid, replacing" << std::endl;
+      cout<<client_request.id<<": in cache, requires validation"<<endl;
       send(client_fd, response_msg.c_str(), response_msg.size(), 0);
       cached_response = revalidation_response;
     }
   } else {
     // The cached response is still valid, return it to the client.
-    std::cout << "cached response is still valid" << std::endl;
+    //std::cout << "cached response is still valid" << std::endl;
+    cout<<client_request.id<<": in cache, valid"<<endl;
     send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
   }
 }
