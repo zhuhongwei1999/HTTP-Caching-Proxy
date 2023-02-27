@@ -27,53 +27,6 @@ int get_port_num(int socket_fd) {
   return ntohs(socket_address.sin_port);
 }
 
-ClientRequest parse_client_request(const char* buffer, int buffer_len) {
-  ClientRequest request;
-  std::string message(buffer, buffer_len);
-  // find the first line and split it into three parts
-  request.msg = message;
-  size_t pos1 = message.find(' ');
-  size_t pos2 = message.find(' ', pos1 + 1);
-  request.method = message.substr(0, pos1);
-  std::string url = message.substr(pos1 + 1, pos2 - pos1 - 1);
-  if (request.method == "CONNECT") {
-    size_t colon_pos = url.find(":");
-    request.path = url.substr(0, colon_pos);
-    if (colon_pos != std::string::npos) {
-      request.port = std::stoi(url.substr(colon_pos + 1));
-    }
-  }
-  else {
-    request.path = url;
-    request.port = 80;
-  }
-  request.protocol = message.substr(pos2 + 1, message.find("\r\n") - pos2 - 1);
-
-  // find the Host header and extract the host name
-  size_t pos = message.find("Host: ");
-  if (pos != std::string::npos) {
-    std::string host = message.substr(pos + 6, message.find("\r\n", pos) - pos - 6);
-    size_t colon_pos = host.find(":");
-    request.host = host.substr(0, colon_pos);
-  }
-
-  // find the end of the headers section and extract all headers
-  pos = message.find("\r\n\r\n");
-  if (pos != std::string::npos) {
-    std::string headers_str = message.substr(0, pos);
-    size_t start = 0;
-    while (true) {
-      size_t end = headers_str.find("\r\n", start);
-      if (end == std::string::npos) {
-        break;
-      }
-      request.headers.push_back(headers_str.substr(start, end - start));
-      start = end + 2;
-    }
-  }
-  return request;
-}
-
 bool is_valid_http_request(const char* buffer, int buffer_len) {
   // convert buffer to a string for easier manipulation
   std::string message(buffer, buffer_len);
@@ -123,27 +76,24 @@ bool is_valid_http_request(const char* buffer, int buffer_len) {
   return true; // request is valid
 }
 
-int connect_to_server(const ClientRequest & request) {
+int connect_to_server(const char * hostname, const char * port) {
   struct addrinfo hints;
   struct addrinfo * server_info_list;
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
-  
-  const char * remote_server_hostname = request.host.c_str();
-  const char * remote_server_port = std::to_string(request.port).c_str();
-  if (getaddrinfo(remote_server_hostname, remote_server_port, &hints, &server_info_list) != 0) {
+  if (getaddrinfo(hostname, port, &hints, &server_info_list) != 0) {
     error("remote server getaddrinfo error!");
   }
-  int remote_server_fd = socket(server_info_list->ai_family, server_info_list->ai_socktype, server_info_list->ai_protocol);
-  if (remote_server_fd == -1) {
+  int server_fd = socket(server_info_list->ai_family, server_info_list->ai_socktype, server_info_list->ai_protocol);
+  if (server_fd == -1) {
     error("remote server socket creation error!");
   }
-  if (connect(remote_server_fd, server_info_list->ai_addr, server_info_list->ai_addrlen) == -1) {
+  if (connect(server_fd, server_info_list->ai_addr, server_info_list->ai_addrlen) == -1) {
     error("connect to server failed!");
   }
   freeaddrinfo(server_info_list);
-  return remote_server_fd;
+  return server_fd;
 }
 
 void sentback_request_page(ClientRequest client_request, std::fstream resource, int client_fd){

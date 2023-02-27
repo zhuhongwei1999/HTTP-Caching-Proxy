@@ -26,13 +26,10 @@ void proxy::run() {
   struct addrinfo *host_info_list;
   const char *hostname = NULL;
   const char *port_num = "12345";
-  
-  // struct sockaddr_in server_address;
-  // struct addrinfo hints;
   memset(&host_info, 0, sizeof(host_info));
 
-  host_info.ai_family   = AF_UNSPEC;  //allow IPv4 & IPv6   
-  host_info.ai_socktype = SOCK_STREAM;//TCP
+  host_info.ai_family   = AF_UNSPEC; 
+  host_info.ai_socktype = SOCK_STREAM;
   host_info.ai_flags    = AI_PASSIVE;
 
   if (getaddrinfo(hostname, port_num, &host_info, &host_info_list) != 0) {
@@ -49,7 +46,7 @@ void proxy::run() {
   if (bind(server_fd, host_info_list->ai_addr, host_info_list->ai_addrlen) != 0) {
     error("Server bind error!");
   }
-  status = listen(server_fd, BACKLOG);//BACKLOG = 200
+  status = listen(server_fd, BACKLOG);
   if (status == -1) {
     error("Server listen error!");
   }
@@ -83,19 +80,21 @@ void * proxy::handle_client(void * arg) {
     return NULL;
   }
   else {
-    ClientRequest client_request = parse_client_request(buffer, buffer_len);
-    client_request.id = id;
+    ClientRequest client_request(id);
+    id++;
+    client_request.parseRequest(buffer, buffer_len);
     //client_request.printClientRequest();
     logFile << client_request.id <<": \""<<client_request.headers[0]
             <<"\" from "<<client_request.port<<" @ "<<getCurrentTime()<<endl;
     // cout << client_request.id <<": \""<<client_request.headers[0]
     //         <<"\" from "<<client_request.port<<" @ "<<getCurrentTime()<<endl;
-    id++;
-    int remote_server_fd = connect_to_server(client_request);
+    const char * server_hostname = client_request.host.c_str();
+    const char * server_port = std::to_string(client_request.port).c_str();
+    int remote_server_fd = connect_to_server(server_hostname, server_port);
+
     if (client_request.method == "CONNECT") {
       handleConnect(client_fd, remote_server_fd, client_request.id);
-      //close tunnel
-      logFile<<client_request.id<<": Tunnel closed"<<endl;
+      logFile << client_request.id << ": Tunnel closed" << endl;
     } else if (client_request.method == "GET") {
       handleGet(client_request, client_fd, remote_server_fd);
     } else if (client_request.method == "POST") {
@@ -175,6 +174,10 @@ void proxy::handlePOST(ClientRequest client_request, int client_fd, int server_f
   char buffer[65536] = {0};
   int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
   send(client_fd, buffer, sizeof(buffer), 0);
+  std::string response_msg(buffer);
+  ServerResponse server_response(response_msg);
+  logFile<<client_request.id<<": Responding \""<<server_response.response_line<<"\""<<endl;
+
 }
 
 void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd, int server_fd, ServerResponse & cached_response) {
