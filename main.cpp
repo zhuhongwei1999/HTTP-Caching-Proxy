@@ -13,4 +13,5 @@ int main() {
   int port_num = atoi(port);
   proxy * myproxy = new proxy(port);
   myproxy->run();
+  return 0;
 }

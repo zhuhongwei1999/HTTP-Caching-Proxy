@@ -11,6 +11,7 @@ using namespace std;
 class ClientRequest {
   public:
     int id;
+    int fd;
     std::string msg;
     std::string method;
     std::string path;
@@ -30,5 +31,19 @@ class ClientRequest {
                                    host("") {}
     void printClientRequest();
     void parseRequest(const char* buffer, int buffer_len);
+    int getContentLength();
+    ClientRequest & operator=(const ClientRequest & rhs) {
+      if (this != &rhs) {
+        id = rhs.id;
+        msg = rhs.msg;
+        method = rhs.method;
+        path = rhs.path;
+        protocol = rhs.protocol;
+        headers = rhs.headers;
+        port = rhs.port;
+        host = rhs.host;
+      }
+      return *this;
+    }
 };
 #endif

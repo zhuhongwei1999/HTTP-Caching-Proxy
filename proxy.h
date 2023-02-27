@@ -4,7 +4,6 @@
 
 extern std::ofstream logFile;
 
-
 class proxy {
 private:
   const char * port_num = "12345";
@@ -14,8 +13,8 @@ public:
   void run();
   static void * handle_client(void * arg);
   static void handleConnect(int client_fd, int server_fd, int client_id);
-  static void handleGet(ClientRequest clinet_request, int client_fd, int server_fd);
-  static void handlePOST(ClientRequest client_request, int client_fd, int server_fd);
-  static void revalidateCachedResponse(ClientRequest client_request, int client_fd, int server_fd, ServerResponse & cached_response);
+  static void handleGet(ClientRequest * clinet_request, int client_fd, int server_fd);
+  static void handlePOST(ClientRequest * client_request, int client_fd, int server_fd);
+  static void revalidateCachedResponse(ClientRequest * client_request, int client_fd, int server_fd, ServerResponse & cached_response);
   static std::string handleChunkMessage(int server_fd, char * buffer, int buffer_size);
 };

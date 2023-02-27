@@ -19,11 +19,11 @@ class ServerResponse {
     std::map<std::string, std::string> headers;
     std::string body;
     std::string message;
-    
+
   public:
     ServerResponse() = default;
     ServerResponse(const std::string & response_msg);
-    std::vector<std::string> split_response(const std::string & s, const std::string & delim);
+    std::vector<std::string> splitResponse(const std::string & s, const std::string & delim);
     ServerResponse & operator=(const ServerResponse & rhs) {
       if (this != &rhs) {
         response_line = rhs.response_line;
@@ -35,9 +35,10 @@ class ServerResponse {
       return *this;
     }
     bool isCacheable(int client_id, int &client_fd);
-    std::time_t parse_date(const std::string & date_str);
-    std::time_t parse_max_age();
-    string parse_expire_time();
+    std::time_t parseDate(const std::string & date_str);
+    std::time_t parseMaxAge();
+    std::time_t getExpiretime();
+    std::time_t parseExpiretime();
 };
 
 #endif

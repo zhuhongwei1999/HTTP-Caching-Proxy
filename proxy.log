@@ -1,25 +1,3 @@
 This is a test log message.
-0: "GET http://www.example.com/ HTTP/1.1" from 80 @ Sun Feb 26 20:58:08 2023
-0: not in cache
-0: Requesting "GET http://www.example.com/ HTTP/1.1" from www.example.com
-0: cached, expires at Mon Mar 06 01:58:08 2023
+0: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Mon Feb 27 11:11:25 2023
 0: Responding "HTTP/1.1 200 OK"
-1: "CONNECT getpocket.cdn.mozilla.net:443 HTTP/1.1" from 443 @ Sun Feb 26 21:01:48 2023
-2: "CONNECT spocs.getpocket.com:443 HTTP/1.1" from 443 @ Sun Feb 26 21:01:48 2023
-1: Responding "HTTP/1.1 200 OK"
-2: Responding "HTTP/1.1 200 OK"
-3: "CONNECT img-getpocket.cdn.mozilla.net:443 HTTP/1.1" from 443 @ Sun Feb 26 21:01:48 2023
-3: Responding "HTTP/1.1 200 OK"
-2: Tunnel closed
-1: Tunnel closed
-3: Tunnel closed
-4: "CONNECT run.mocky.io:443 HTTP/1.1" from 443 @ Sun Feb 26 21:06:48 2023
-4: Responding "HTTP/1.1 200 OK"
-4: Tunnel closed
-5: "GET http://run.mocky.io/v3/47c0d6da-0fc6-4f81-b787-1cce688e580f HTTP/1.1" from 80 @ Sun Feb 26 21:07:44 2023
-5: not in cache
-5: Requesting "GET http://run.mocky.io/v3/47c0d6da-0fc6-4f81-b787-1cce688e580f HTTP/1.1" from run.mocky.io
-5: Responding "HTTP/1.1 400 Bad Request"
-5: Responding "HTTP/1.1 400 Bad Request"
-6: "CONNECT incoming.telemetry.mozilla.org:443 HTTP/1.1" from 443 @ Sun Feb 26 21:07:45 2023
-6: Responding "HTTP/1.1 200 OK"

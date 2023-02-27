@@ -17,7 +17,7 @@ void ClientRequest::printClientRequest() {
   cout<<"hostname: "<<host<<" port:"<<port<<endl;
 }
 
-void ClientRequest::parseRequest(const char* buffer, int buffer_len) {
+void ClientRequest::parseRequest(const char * buffer, int buffer_len) {
   std::string message(buffer, buffer_len);
   // find the first line and split it into three parts
   msg = message;
@@ -40,9 +40,9 @@ void ClientRequest::parseRequest(const char* buffer, int buffer_len) {
   // find the Host header and extract the host name
   size_t pos = message.find("Host: ");
   if (pos != std::string::npos) {
-    std::string host = message.substr(pos + 6, message.find("\r\n", pos) - pos - 6);
-    size_t colon_pos = host.find(":");
-    host = host.substr(0, colon_pos);
+    std::string temp = message.substr(pos + 6, message.find("\r\n", pos) - pos - 6);
+    size_t colon_pos = temp.find(":");
+    host = temp.substr(0, colon_pos);
   }
   // find the end of the headers section and extract all headers
   pos = message.find("\r\n\r\n");
@@ -58,4 +58,20 @@ void ClientRequest::parseRequest(const char* buffer, int buffer_len) {
       start = end + 2;
     }
   }
+}
+
+int ClientRequest::getContentLength() {
+  const std::string find_str = "Content-Length: ";
+  size_t pos = msg.find(find_str);
+  if (pos == std::string::npos) {
+    return -1;
+  }
+  pos += find_str.length();
+  size_t end_pos = msg.find("\r\n", pos);
+  if (end_pos == std::string::npos) {
+    return -1;
+  }
+  std::string len_str = msg.substr(pos, end_pos - pos);
+  int len = std::stoi(len_str);
+  return len;
 }

@@ -5,6 +5,10 @@ void error(const char* message) {
   exit(EXIT_FAILURE);
 }
 
+void Log(const char * message) {
+  std::cout << message << std::endl;
+}
+
 std::string get_ip_address(int socket_fd) {
   struct sockaddr_in socket_address;
   socklen_t address_len = sizeof(socket_address);

@@ -13,6 +13,7 @@
 #include "client.h"
 
 void error(const char* message);
+void Log(const char * message);
 std::string get_ip_address(int socket_fd);
 int get_port_num(int socket_fd);
 bool is_valid_http_request(const char* buffer, int buffer_len);
