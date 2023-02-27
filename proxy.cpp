@@ -134,8 +134,6 @@ void proxy::handleGet(ClientRequest client_request, int client_fd, int server_fd
     if (server_response.isCacheable(client_request.id, client_fd)) {
       cache.cacheResponse(client_request.headers[0], server_response, client_request.id);
       // logFile<<client_request.id<<": cached, expires at "<<response.parse_expire_time()<<endl;
-      auto it = server_response.headers.find("Expires");
-      logFile<<client_request.id<<": cached, expires at "<<it->second<<endl;
     }
     send(client_fd, buffer, sizeof(buffer), 0);
     logFile<<client_request.id<<": Responding \""<<server_response.response_line<<"\""<<endl;
@@ -180,7 +178,6 @@ void proxy::handlePOST(ClientRequest client_request, int client_fd, int server_f
 
 void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd, int server_fd, ServerResponse & cached_response) {
   //replace Time?
-  //
   std::time_t current_time = std::time(NULL);
   std::time_t max_age = cached_response.parse_max_age();
   bool is_expired = (max_age >= 0 && current_time > cached_response.parse_date(cached_response.headers["Date"]) + max_age);
@@ -190,8 +187,8 @@ void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd
     if(is_no_cache){
       logFile<<client_request.id<<": in cache, requires validation "<<endl;//can expires use here?
     }else if(is_expired){
-      auto it = cached_response.headers.find("Expires");
-      logFile<<client_request.id<<": in cache, but expired at "<<it->second<<endl;
+      //auto it = cached_response.headers.find("Expires");
+      logFile<<client_request.id<<": in cache, but expired at "<<cached_response.parse_expire_time()<<endl;
     }
    //can expires use here?
     ClientRequest revalidation_request = client_request;
@@ -212,9 +209,6 @@ void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd
     logFile<<client_request.id<<": Received \""<<revalidation_response.response_line<<"\" from "<<client_request.host<<endl;
     if (revalidation_response.status_code == 304) {
       // The cached response is still valid.
-      //logFile
-      //logFile<<client_request.id<<": in cache, valid"<<endl;
-      //cout<<client_request.id<<": in cache, valid"<<endl;
       send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
       logFile<<client_request.id<<": Responding \""<<revalidation_response.response_line<<"\""<<endl;
     } else {
@@ -230,7 +224,8 @@ void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd
     //std::cout << "cached response is still valid" << std::endl;
     logFile<<client_request.id<<": in cache, valid"<<endl;
     send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
-    logFile<<client_request.id<<": Responding \""<<cached_response.response_line<<"\""<<endl;
+    //cout<<"Test2:"<<cached_response.response_line<<endl;
+    logFile<<client_request.id<<": Responding \""<<cached_response.response_line.c_str()<<"\""<<endl;
   }
 }
 

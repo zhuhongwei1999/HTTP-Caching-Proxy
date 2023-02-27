@@ -26,6 +26,7 @@ class ServerResponse {
     std::vector<std::string> split_response(const std::string & s, const std::string & delim);
     ServerResponse & operator=(const ServerResponse & rhs) {
       if (this != &rhs) {
+        response_line = rhs.response_line;
         status_code = rhs.status_code;
         headers = rhs.headers;
         body = rhs.body;

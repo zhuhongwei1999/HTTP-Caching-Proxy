@@ -6,6 +6,8 @@ ServerResponse::ServerResponse(const std::string & response_msg) {
   std::vector<std::string> lines = split_response(response_msg, "\r\n");
   if (lines.empty()) return;
   response_line = lines[0];
+  // cout<<"Test: lines[0]:"<<lines[0]<<endl;yes
+  // cout<<"Test: response line:"<<response_line<<endl;yes
   std::vector<std::string> status_line = split_response(lines[0], " ");
   if (status_line.size() < 2) return;
   status_code = std::stoi(status_line[1]);
@@ -109,7 +111,5 @@ string ServerResponse::parse_expire_time(){
   char new_string[100] = {};
   std::strftime(new_string, sizeof(new_string), "%a %b %d %H:%M:%S %Y", std::localtime(&time_value));
 
-  // Print the new string
-  string s(new_string);
-  return s;
+  return string(new_string);
 }
