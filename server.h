@@ -2,9 +2,15 @@
 #include <vector>
 #include <map>
 #include <ctime>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
+extern std::ofstream logFile;
 
 #ifndef SERVER_RESPONSE_H
 #define SERVER_RESPONSE_H
+using namespace std;
 
 class ServerResponse {
   public:
@@ -27,9 +33,10 @@ class ServerResponse {
       }
       return *this;
     }
-    bool isCacheable(int client_id);
+    bool isCacheable(int client_id, int &client_fd);
     std::time_t parse_date(const std::string & date_str);
     std::time_t parse_max_age();
+    string parse_expire_time();
 };
 
 #endif

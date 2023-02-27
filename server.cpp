@@ -35,22 +35,26 @@ std::vector<std::string> ServerResponse::split_response(const std::string & s, c
   return tokens;
 }
 
-bool ServerResponse::isCacheable(int client_id) {
+bool ServerResponse::isCacheable(int client_id, int &client_fd) {
   if (status_code != 200) {
+    send(client_fd, &response_line, response_line.size(), 0);
+    logFile<<client_id<<": Responding \""<<response_line<<"\""<<endl;
     return false;
   }
   std::map<std::string, std::string>::iterator it;
   it = headers.find("Cache-Control");
   if (it != headers.end()) {
     if (it->second == "no-store"){
-      cout<<client_id<<": not cacheable because the response must not be cached in any form."<<endl;
+      logFile<<client_id<<": NOTE Cache-Control: no-store"<<endl;
+      logFile<<client_id<<": not cacheable because the response must not be cached in any form."<<endl;
       return false;
     }
     if (it->second.find("max-age=") != std::string::npos) {
       size_t eq_pos = it->second.find('=');
       std::string max_age = it->second.substr(eq_pos + 1);
       if (max_age == "0"){
-        cout<<client_id<<": not cacheable because the the response should not be cached for client to ensure that it has the latest version."<<endl;
+        logFile<<client_id<<": NOTE max-age=0"<<endl;
+        logFile<<client_id<<": not cacheable because the the response should not be cached for client to ensure that it has the latest version."<<endl;
         return false;
       }
     }
@@ -59,7 +63,7 @@ bool ServerResponse::isCacheable(int client_id) {
   if (it != headers.end()) {
     std::time_t expiration_time = parse_date(it->second);
     if (expiration_time <= std::time(NULL)) {
-      cout<<client_id<<": not cacheable because the the response expired."<<endl;
+      logFile<<client_id<<": not cacheable because the the response expired."<<endl;
       return false;
     }
   }
@@ -86,4 +90,26 @@ std::time_t ServerResponse::parse_max_age() {
     }
   }
   return -1;
+}
+
+
+string ServerResponse::parse_expire_time(){
+  auto it = headers.find("Expires");
+  string original_string = it->second;
+  
+  // Parse the original string into a time struct
+  std::tm time_struct = {};
+  std::istringstream ss(original_string);
+  ss >> std::get_time(&time_struct, "%a, %d %b %Y %H:%M:%S %Z");
+
+  // Convert the time struct to a time_t value
+  std::time_t time_value = std::mktime(&time_struct);
+
+  // Format the time value into the desired string format
+  char new_string[100] = {};
+  std::strftime(new_string, sizeof(new_string), "%a %b %d %H:%M:%S %Y", std::localtime(&time_value));
+
+  // Print the new string
+  string s(new_string);
+  return s;
 }

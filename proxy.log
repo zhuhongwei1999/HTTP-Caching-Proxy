@@ -1,1 +1,10 @@
 This is a test log message.
+0: "GET http://www.example.com/ HTTP/1.1" from 80 @ Sun Feb 26 19:54:04 2023
+0: not in cache
+0: Requesting "GET http://www.example.com/ HTTP/1.1" from www.example.com
+0: cached, expires at Mon, 06 Mar 2023 00:54:04 GMT
+0: cached, expires at Mon, 06 Mar 2023 00:54:04 GMT
+0: Responding "HTTP/1.1 200 OK"
+1: "GET http://www.example.com/ HTTP/1.1" from 80 @ Sun Feb 26 19:54:05 2023
+1: in cache, valid
+1: Responding ""

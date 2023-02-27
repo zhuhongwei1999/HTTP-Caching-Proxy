@@ -203,7 +203,7 @@ void checkLogFile(std::ofstream &logFile){
             // Writing to the log file failed
             std::cerr << "Error writing to log file." << std::endl;
         }
-        logFile.close();
+        //logFile.close();
   }else{
         std::cerr << "Error opening log file." << std::endl;
   }

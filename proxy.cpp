@@ -86,14 +86,16 @@ void * proxy::handle_client(void * arg) {
     ClientRequest client_request = parse_client_request(buffer, buffer_len);
     client_request.id = id;
     //client_request.printClientRequest();
-    // logFile << client_request.id <<": \""<<client_request.headers[0]
-    //         <<"\" from"<<client_request.port<<" @ "<<getCurrentTime()<<endl;
-    cout << client_request.id <<": \""<<client_request.headers[0]
+    logFile << client_request.id <<": \""<<client_request.headers[0]
             <<"\" from "<<client_request.port<<" @ "<<getCurrentTime()<<endl;
+    // cout << client_request.id <<": \""<<client_request.headers[0]
+    //         <<"\" from "<<client_request.port<<" @ "<<getCurrentTime()<<endl;
     id++;
     int remote_server_fd = connect_to_server(client_request);
     if (client_request.method == "CONNECT") {
-      handleConnect(client_fd, remote_server_fd);
+      handleConnect(client_fd, remote_server_fd, client_request.id);
+      //close tunnel
+      logFile<<client_request.id<<": Tunnel closed"<<endl;
     } else if (client_request.method == "GET") {
       handleGet(client_request, client_fd, remote_server_fd);
     } else if (client_request.method == "POST") {
@@ -107,38 +109,45 @@ void proxy::handleGet(ClientRequest client_request, int client_fd, int server_fd
   ServerResponse response;
   bool in_cache = cache.getCachedResponse(client_request.headers[0], response);
   if (in_cache) {
-    std::cout << "Test: in cache" << std::endl;
+    //std::cout << "Test: in cache" << std::endl;
     revalidateCachedResponse(client_request, client_fd, server_fd, response);
     return;
   }
   //logFile
-  cout<<client_request.id<<": not in cache"<<endl;
+  logFile<<client_request.id<<": not in cache"<<endl;
   send(server_fd, client_request.msg.c_str(), strlen(client_request.msg.c_str()), 0);
   //logFile
-  cout<<client_request.id<<": Requesting \""<<client_request.headers[0]<<"\" from "<<client_request.host<<endl;
+  logFile<<client_request.id<<": Requesting \""<<client_request.headers[0]<<"\" from "<<client_request.host<<endl;
   char buffer[65536] = {0};
   int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
   std::string response_msg(buffer);
   ServerResponse server_response(response_msg);
    //logFile
-  cout<<client_request.id<<": Received \""<<server_response.response_line<<"\" from "<<client_request.host<<endl;
+  //logFile<<client_request.id<<": Received \""<<server_response.response_line<<"\" from "<<client_request.host<<endl;
   if (server_response.headers.count("Transfer-Encoding") && server_response.headers["Transfer-Encoding"] == "chunked") {
     std::string response_body;
     response_body = handleChunkMessage(server_fd, buffer, strlen(buffer));
     send(client_fd, response_msg.c_str(), response_msg.size(), 0);
+    logFile<<client_request.id<<": Responding \""<<server_response.response_line<<"\""<<endl;
   }
-  else {
-    if (server_response.isCacheable(client_request.id)) {
+  else {//not chunked
+    if (server_response.isCacheable(client_request.id, client_fd)) {
       cache.cacheResponse(client_request.headers[0], server_response, client_request.id);
+      // logFile<<client_request.id<<": cached, expires at "<<response.parse_expire_time()<<endl;
+      auto it = server_response.headers.find("Expires");
+      logFile<<client_request.id<<": cached, expires at "<<it->second<<endl;
     }
     send(client_fd, buffer, sizeof(buffer), 0);
+    logFile<<client_request.id<<": Responding \""<<server_response.response_line<<"\""<<endl;
   }
   return;
 }
 
-void proxy::handleConnect(int client_fd, int server_fd) {
+void proxy::handleConnect(int client_fd, int server_fd, int client_id) {
   std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+  std::string logResponse = "HTTP/1.1 200 OK";
   send(client_fd, response.c_str(), response.length(), 0);
+  logFile<<client_id<<": Responding \""<<logResponse<<"\""<<endl;
   fd_set readfds;
   while (true) {
     FD_ZERO(&readfds);
@@ -170,15 +179,21 @@ void proxy::handlePOST(ClientRequest client_request, int client_fd, int server_f
 }
 
 void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd, int server_fd, ServerResponse & cached_response) {
+  //replace Time?
+  //
   std::time_t current_time = std::time(NULL);
   std::time_t max_age = cached_response.parse_max_age();
-  if ((max_age >= 0 && current_time > cached_response.parse_date(cached_response.headers["Date"]) + max_age) || 
-      (cached_response.headers.count("Cache-Control") && cached_response.headers["Cache-Control"] == "no-cache")) {
+  bool is_expired = (max_age >= 0 && current_time > cached_response.parse_date(cached_response.headers["Date"]) + max_age);
+  bool is_no_cache = (cached_response.headers.count("Cache-Control") && cached_response.headers["Cache-Control"] == "no-cache");
+  if (is_expired || is_no_cache) {
     // The cached response has expired, revalidate it with the server.
-    //logFile
-    auto it = cached_response.headers.find("Expires");
-    std::time_t time = cached_response.parse_date(it->second);
-    cout<<client_request.id<<": in cache, but expired at "<<time<<endl;//can expires use here?
+    if(is_no_cache){
+      logFile<<client_request.id<<": in cache, requires validation "<<endl;//can expires use here?
+    }else if(is_expired){
+      auto it = cached_response.headers.find("Expires");
+      logFile<<client_request.id<<": in cache, but expired at "<<it->second<<endl;
+    }
+   //can expires use here?
     ClientRequest revalidation_request = client_request;
     if (cached_response.headers.count("ETag")) {
       revalidation_request.headers.push_back("If-None-Match: " + cached_response.headers["ETag"]);
@@ -188,30 +203,34 @@ void proxy::revalidateCachedResponse(ClientRequest client_request, int client_fd
     // Send the revalidation request to the server.
     send(server_fd, revalidation_request.msg.c_str(), strlen(revalidation_request.msg.c_str()), 0);
     //logFile
-    cout<<client_request.id<<": Requesting \""<<client_request.headers[0]<<"\" from "<<client_request.host<<endl;
+    logFile<<client_request.id<<": Requesting \""<<client_request.headers[0]<<"\" from "<<client_request.host<<endl;
     char buffer[65536] = {0};
     int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
     std::string response_msg(buffer);
     ServerResponse revalidation_response(response_msg);
     //logFile
-    cout<<client_request.id<<": Received \""<<revalidation_response.response_line<<"\" from "<<client_request.host<<endl;
+    logFile<<client_request.id<<": Received \""<<revalidation_response.response_line<<"\" from "<<client_request.host<<endl;
     if (revalidation_response.status_code == 304) {
       // The cached response is still valid.
       //logFile
-      cout<<client_request.id<<": in cache, valid"<<endl;
+      //logFile<<client_request.id<<": in cache, valid"<<endl;
+      //cout<<client_request.id<<": in cache, valid"<<endl;
       send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
+      logFile<<client_request.id<<": Responding \""<<revalidation_response.response_line<<"\""<<endl;
     } else {
       // The cached response is not valid, replace it with the new response.
       //std::cout << "Test: cached response is not valid, replacing" << std::endl;
-      cout<<client_request.id<<": in cache, requires validation"<<endl;
+      //cout<<client_request.id<<": in cache, requires validation"<<endl;
       send(client_fd, response_msg.c_str(), response_msg.size(), 0);
+      logFile<<client_request.id<<": Responding \""<<revalidation_response.response_line<<"\""<<endl;
       cached_response = revalidation_response;
     }
   } else {
     // The cached response is still valid, return it to the client.
     //std::cout << "cached response is still valid" << std::endl;
-    cout<<client_request.id<<": in cache, valid"<<endl;
+    logFile<<client_request.id<<": in cache, valid"<<endl;
     send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
+    logFile<<client_request.id<<": Responding \""<<cached_response.response_line<<"\""<<endl;
   }
 }
 

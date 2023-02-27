@@ -14,9 +14,9 @@ class Cache {
   public:
     void cacheResponse(const std::string & request, ServerResponse & response, int client_id) {
       auto it = response.headers.find("Expires");
-      std::time_t time = response.parse_date(it->second);
-      cout<<client_id<<": cached, expires at "<<time<<endl;
-      cout<<client_id<<": cached, but requires re-validation"<<endl;
+      //needs seperate situation
+      logFile<<client_id<<": cached, expires at "<<it->second<<endl;
+      //logFile<<client_id<<": cached, but requires re-validation"<<endl;
       cache_item[request] = response;
     }
 
