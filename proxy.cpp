@@ -137,6 +137,7 @@ void proxy::handleGet(ClientRequest client_request, int client_fd, int server_fd
     }
     send(client_fd, buffer, sizeof(buffer), 0);
     logFile<<client_request.id<<": Responding \""<<server_response.response_line<<"\""<<endl;
+    cout<<server_response.message;
   }
   return;
 }
