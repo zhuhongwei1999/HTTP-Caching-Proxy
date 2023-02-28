@@ -87,14 +87,18 @@ int connect_to_server(const char * hostname, const char * port) {
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
   if (getaddrinfo(hostname, port, &hints, &server_info_list) != 0) {
-    error("remote server getaddrinfo error!");
+    std::cerr << "remote server getaddrinfo error!" << std::endl;
+    return -1;
+    
   }
   int server_fd = socket(server_info_list->ai_family, server_info_list->ai_socktype, server_info_list->ai_protocol);
   if (server_fd == -1) {
-    error("remote server socket creation error!");
+    std::cerr << "remote server getaddrinfo error!" << std::endl;
+    return -1;
   }
   if (connect(server_fd, server_info_list->ai_addr, server_info_list->ai_addrlen) == -1) {
-    error("connect to server failed!");
+    std::cerr << "connect to server failed!" << std::endl;
+    return -1;
   }
   freeaddrinfo(server_info_list);
   return server_fd;
@@ -104,38 +108,8 @@ void sentback_request_page(ClientRequest client_request, std::fstream resource, 
   char buffer[1024];
   if (resource.get(buffer, 1024)){
     int len = write(client_fd, buffer, strlen(buffer));
-    }
-  // char buf[1024];
-  // fgets(buf, sizeof(buf), resource);
-  // while(!feof(resource)){
-  //   int len = write(client_fd, buf, strlen(buf));
-  //   if(len < 0){
-  //     error("Sent back request page fail.\n");
-  //   }
-  //   fgets(buf, sizeof(buf), resource);
-  // }
+  }
 }
-
-// void notFound404(int client_fd, int client_id){
-//   const char * msg = "HTTP/1.1 404 Not Found\n";
-//   string reply(msg);
-//   if(int len = send(client_fd, msg, strlen(msg), 0) < 0){
-//     error("Reply 404 error.\n");
-//   }
-//   //logFile
-//   cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
-// }
-
-
-// void badGateway502(int client_fd, int client_id){
-//   const char * msg = "HTTP/1.1 502 Bad Gateway\n";
-//    string reply(msg);
-//   if(int len = send(client_fd, msg, strlen(msg), 0) < 0){
-//     error("Reply 502 error.\n");
-//   }
-//   //logFile
-//   cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
-// }
 
 std::string convertTimeToString(std::time_t now) {
 

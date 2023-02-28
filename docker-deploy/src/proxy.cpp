@@ -57,7 +57,8 @@ void proxy::run() {
     socklen_t socket_addr_len = sizeof(client_addr);
     client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &socket_addr_len);
     if (client_fd == -1) {
-      error("Server accept client socket error!");
+      std::cerr << "Server accept client socket error!" << std::endl;
+      continue;
     }
     std::cout<<"Server accept client success.\n";
     ClientRequest * client_request = new ClientRequest(id);
@@ -67,8 +68,6 @@ void proxy::run() {
     pthread_create(&client_thread, NULL, handle_client, client_request);
   }
 }
-//TODO:every time writing a log; access cache (add, remove, replace)
-//GET: ridesharing , weibo
 
 void * proxy::handle_client(void * arg) {
   ClientRequest * client_request = (ClientRequest*)arg;
@@ -78,6 +77,8 @@ void * proxy::handle_client(void * arg) {
   bool is_valid_request = is_valid_http_request(buffer, buffer_len);
   if (!is_valid_request) {
     std::cerr << "Invalid request!" << std::endl;
+    delete client_request;
+    close(client_fd);
     return NULL;
   }
   else {
@@ -91,6 +92,11 @@ void * proxy::handle_client(void * arg) {
     const char * server_hostname = client_request->host.c_str();
     const char * server_port = std::to_string(client_request->port).c_str();
     int remote_server_fd = connect_to_server(server_hostname, server_port);
+    if (remote_server_fd == -1) {
+      delete client_request;
+      close(client_fd);
+      return NULL;
+    }
     if (client_request->method == "CONNECT") {
       handleConnect(client_fd, remote_server_fd, client_request->id);
       pthread_mutex_lock(&mutex);
