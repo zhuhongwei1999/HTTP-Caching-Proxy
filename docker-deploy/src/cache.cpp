@@ -1,5 +1,7 @@
 #include "cache.h"
 
+extern pthread_mutex_t mutex;
+
 void Cache::cacheResponse(const std::string & request, ServerResponse & response, int client_id) {
   auto it = cache_item.find(request);
   if (it == cache_item.end()) {
@@ -20,7 +22,7 @@ void Cache::cacheResponse(const std::string & request, ServerResponse & response
   }
   auto cache_control = response.headers.find("Cache-Control");
   if (cache_control != response.headers.end() && cache_control->second == "no-cache"){
-    logFile << client_id << ": cached, but requires re-validation" << std::endl;  
+    logFile << client_id << ": cached, but requires re-validation" << std::endl; 
     return;   
   }
   logFile << client_id << ": cached, expires at " << convertTimeToString(response.getExpiretime()) << std::endl;

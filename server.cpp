@@ -6,8 +6,6 @@ ServerResponse::ServerResponse(const std::string & response_msg) {
   std::vector<std::string> lines = splitResponse(response_msg, "\r\n");
   if (lines.empty()) return;
   response_line = lines[0];
-  // cout<<"Test: lines[0]:"<<lines[0]<<endl;yes
-  // cout<<"Test: response line:"<<response_line<<endl;yes
   std::vector<std::string> status_line = splitResponse(lines[0], " ");
   if (status_line.size() < 2) return;
   status_code = std::stoi(status_line[1]);

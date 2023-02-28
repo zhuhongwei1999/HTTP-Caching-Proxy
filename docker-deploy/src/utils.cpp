@@ -116,26 +116,26 @@ void sentback_request_page(ClientRequest client_request, std::fstream resource, 
   // }
 }
 
-void notFound404(int client_fd, int client_id){
-  const char * msg = "HTTP/1.1 404 Not Found\n";
-  string reply(msg);
-  if(int len = send(client_fd, msg, strlen(msg), 0) < 0){
-    error("Reply 404 error.\n");
-  }
-  //logFile
-  cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
-}
+// void notFound404(int client_fd, int client_id){
+//   const char * msg = "HTTP/1.1 404 Not Found\n";
+//   string reply(msg);
+//   if(int len = send(client_fd, msg, strlen(msg), 0) < 0){
+//     error("Reply 404 error.\n");
+//   }
+//   //logFile
+//   cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
+// }
 
 
-void badGateway502(int client_fd, int client_id){
-  const char * msg = "HTTP/1.1 502 Bad Gateway\n";
-   string reply(msg);
-  if(int len = send(client_fd, msg, strlen(msg), 0) < 0){
-    error("Reply 502 error.\n");
-  }
-  //logFile
-  cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
-}
+// void badGateway502(int client_fd, int client_id){
+//   const char * msg = "HTTP/1.1 502 Bad Gateway\n";
+//    string reply(msg);
+//   if(int len = send(client_fd, msg, strlen(msg), 0) < 0){
+//     error("Reply 502 error.\n");
+//   }
+//   //logFile
+//   cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
+// }
 
 std::string convertTimeToString(std::time_t now) {
 
@@ -153,7 +153,7 @@ void checkLogFile(std::ofstream &logFile){
         logFile << "This is a test log message." << std::endl;
         if (logFile.good()) {
             // Writing to the log file was successful
-            std::cout << "Successfully wrote to log file." << std::endl;
+            //std::cout << "Successfully wrote to log file." << std::endl;
         } else {
             // Writing to the log file failed
             std::cerr << "Error writing to log file." << std::endl;

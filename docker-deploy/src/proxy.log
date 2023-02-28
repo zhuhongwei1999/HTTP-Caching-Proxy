@@ -1,117 +1,102 @@
 This is a test log message.
-0: "CONNECT push.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 05:21:45 2023
-0: Responding "HTTP/1.1 200 OK"
+0: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:07:02 2023
 0: Tunnel closed
-1: "GET http://detectportal.firefox.com/canonical.html HTTP/1.1" from 80 @ Tue Feb 28 05:22:18 2023
-1: not in cache
-1: Requesting "GET http://detectportal.firefox.com/canonical.html HTTP/1.1" from detectportal.firefox.com
-1: cached, expires at Mon Feb 27 17:34:33 2023
-1: Responding "HTTP/1.1 200 OK"
-1: ResponseMsg "HTTP/1.1 200 OK
-Server: nginx
-Content-Length: 90
-Via: 1.1 google
-Date: Mon, 27 Feb 2023 17:34:33 GMT
-Content-Type: text/html
-Age: 42465
-Cache-Control: public,must-revalidate,max-age=0,s-maxage=3600
-
-<meta http-equiv="refresh" content="0;url=https://support.mozilla.org/kb/captive-portal"/>"
-2: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:18 2023
-3: "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from 80 @ Tue Feb 28 05:22:18 2023
-3: not in cache
-3: Requesting "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from detectportal.firefox.com
-3: cached, expires at Tue Feb 28 04:07:41 2023
-3: Responding "HTTP/1.1 200 OK"
-3: ResponseMsg "HTTP/1.1 200 OK
-Server: nginx
-Content-Length: 8
-Via: 1.1 google
-Date: Tue, 28 Feb 2023 04:07:41 GMT
-Content-Type: text/plain
-Age: 4477
-Cache-Control: public,must-revalidate,max-age=0,s-maxage=3600
-
-success
-"
-2: Responding "HTTP/1.1 200 OK"
-4: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-4: Responding "HTTP/1.1 200 OK"
-5: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-5: Responding "HTTP/1.1 200 OK"
-6: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-9: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-7: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-8: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-6: Responding "HTTP/1.1 200 OK"
-9: Responding "HTTP/1.1 200 OK"
-7: Responding "HTTP/1.1 200 OK"
-8: Responding "HTTP/1.1 200 OK"
-10: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:19 2023
-10: Responding "HTTP/1.1 200 OK"
-11: "POST http://ocsp.digicert.com/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:20 2023
-11: Responding "HTTP/1.1 200 OK"
-14: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:20 2023
-13: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:20 2023
-12: "POST http://ocsp.digicert.com/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:20 2023
-14: Responding "HTTP/1.1 200 OK"
-13: Responding "HTTP/1.1 200 OK"
-12: Responding "HTTP/1.1 200 OK"
-15: "POST http://ocsp.digicert.com/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:20 2023
-15: Responding "HTTP/1.1 200 OK"
-16: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:20 2023
-16: Responding "HTTP/1.1 200 OK"
-17: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:21 2023
-17: Responding "HTTP/1.1 200 OK"
-18: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:22 2023
-18: Responding "HTTP/1.1 200 OK"
-19: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:22 2023
-20: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:22 2023
-21: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:22 2023
-19: Responding "HTTP/1.1 200 OK"
-22: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:22 2023
-20: Responding "HTTP/1.1 200 OK"
-21: Responding "HTTP/1.1 200 OK"
-22: Responding "HTTP/1.1 200 OK"
-23: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:23 2023
-23: Responding "HTTP/1.1 200 OK"
-25: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:24 2023
-24: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:24 2023
-25: Responding "HTTP/1.1 200 OK"
-24: Responding "HTTP/1.1 200 OK"
-27: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:25 2023
-26: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:25 2023
+1: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:07:12 2023
+1: Tunnel closed
+2: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:07:22 2023
+2: Tunnel closed
+3: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:07:32 2023
+3: Tunnel closed
+4: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:07:43 2023
+4: Tunnel closed
+5: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:07:53 2023
+5: Tunnel closed
+6: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:03 2023
+7: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:03 2023
+6: Tunnel closed
+8: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:13 2023
+7: Tunnel closed
+9: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:13 2023
+8: Received "" from www.youtube.com
+8: Tunnel closed
+9: Received "" from www.youtube.com
+9: Tunnel closed
+11: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:16 2023
+10: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:16 2023
+10: Tunnel closed
+12: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:26 2023
+11: Tunnel closed
+13: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:26 2023
+12: Received "" from www.youtube.com
+12: Tunnel closed
+13: Tunnel closed
+14: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:37 2023
+15: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:40 2023
+14: Tunnel closed
+16: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:47 2023
+15: Tunnel closed
+17: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:50 2023
+16: Tunnel closed
+18: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:08:57 2023
+17: Tunnel closed
+19: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:00 2023
+19: Received "" from www.youtube.com
+19: Tunnel closed
+18: Tunnel closed
+20: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:07 2023
+20: Tunnel closed
+22: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:17 2023
+23: "CONNECT m.weibo.cn:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:19 2023
+22: Tunnel closed
+24: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:28 2023
+23: Tunnel closed
+25: "CONNECT m.weibo.cn:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:30 2023
+26: "GET http://httpbin.org/forms/post HTTP/1.1" from 80 @ Tue Feb 28 21:09:31 2023
+26: not in cache
+26: Requesting "GET http://httpbin.org/forms/post HTTP/1.1" from httpbin.org
+26: Received "HTTP/1.1 200 OK" from httpbin.org
+26: cached, expires at Tue Feb 28 21:09:30 2023
 26: Responding "HTTP/1.1 200 OK"
-27: Responding "HTTP/1.1 200 OK"
-29: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:26 2023
-30: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:26 2023
-32: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:26 2023
-28: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:26 2023
-31: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:26 2023
+27: "GET http://httpbin.org/favicon.ico HTTP/1.1" from 80 @ Tue Feb 28 21:09:31 2023
+27: not in cache
+27: Requesting "GET http://httpbin.org/favicon.ico HTTP/1.1" from httpbin.org
+27: Received "HTTP/1.1 404 NOT FOUND" from httpbin.org
+27: Responding "HTTP/1.1 404 NOT FOUND"
+27: Responding "HTTP/1.1 404 NOT FOUND"
+28: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:33 2023
+29: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 21:09:34 2023
+29: Received "HTTP/1.1 200 OK" from httpbin.org
 29: Responding "HTTP/1.1 200 OK"
+30: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 21:09:36 2023
+30: Received "HTTP/1.1 200 OK" from httpbin.org
 30: Responding "HTTP/1.1 200 OK"
-32: Responding "HTTP/1.1 200 OK"
-28: Responding "HTTP/1.1 200 OK"
-31: Responding "HTTP/1.1 200 OK"
-33: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:27 2023
-33: Responding "HTTP/1.1 200 OK"
-34: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:27 2023
-34: Responding "HTTP/1.1 200 OK"
-35: "POST http://ocsp.pki.goog/gts1c3 HTTP/1.1" from 80 @ Tue Feb 28 05:22:29 2023
-35: Responding "HTTP/1.1 200 OK"
-36: "POST http://ocsp.digicert.com/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:30 2023
-36: Responding "HTTP/1.1 200 OK"
-37: "POST http://ocsp.digicert.com/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:30 2023
-37: Responding "HTTP/1.1 200 OK"
-38: "POST http://ocsp.digicert.com/ HTTP/1.1" from 80 @ Tue Feb 28 05:22:52 2023
-38: Responding "HTTP/1.1 200 OK"
-39: "GET http://detectportal.firefox.com/canonical.html HTTP/1.1" from 80 @ Tue Feb 28 05:23:18 2023
-39: in cache, but expired at Wed Dec 31 23:59:59 1969
-39: Requesting "GET http://detectportal.firefox.com/canonical.html HTTP/1.1" from detectportal.firefox.com
-39: Received "HTTP/1.1 200 OK" from detectportal.firefox.com
-39: Responding "HTTP/1.1 200 OK"
-40: "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from 80 @ Tue Feb 28 05:23:18 2023
-40: in cache, but expired at Wed Dec 31 23:59:59 1969
-40: Requesting "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from detectportal.firefox.com
-40: Received "HTTP/1.1 200 OK" from detectportal.firefox.com
-40: Responding "HTTP/1.1 200 OK"
+24: Tunnel closed
+31: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:38 2023
+25: Tunnel closed
+32: "CONNECT m.weibo.cn:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:41 2023
+28: Tunnel closed
+33: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:43 2023
+31: Tunnel closed
+34: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:48 2023
+32: Tunnel closed
+35: "CONNECT m.weibo.cn:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:51 2023
+33: Tunnel closed
+36: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:53 2023
+36: Received "" from www.youtube.com
+36: Tunnel closed
+34: Tunnel closed
+37: "CONNECT i.ytimg.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:58 2023
+38: "CONNECT safebrowsing.googleapis.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:58 2023
+39: "CONNECT googleads.g.doubleclick.net:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:58 2023
+40: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:58 2023
+41: "CONNECT safebrowsing.googleapis.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:58 2023
+42: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:59 2023
+43: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:59 2023
+44: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:09:59 2023
+43: Received "" from www.youtube.com
+43: Tunnel closed
+44: Received "" from www.youtube.com
+44: Tunnel closed
+45: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 21:10:01 2023
+35: Tunnel closed
+46: "CONNECT m.weibo.cn:443 HTTP/1.1" from 443 @ Tue Feb 28 21:10:02 2023

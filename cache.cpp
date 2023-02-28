@@ -22,14 +22,10 @@ void Cache::cacheResponse(const std::string & request, ServerResponse & response
   }
   auto cache_control = response.headers.find("Cache-Control");
   if (cache_control != response.headers.end() && cache_control->second == "no-cache"){
-    pthread_mutex_lock(&mutex);
     logFile << client_id << ": cached, but requires re-validation" << std::endl; 
-    pthread_mutex_unlock(&mutex); 
     return;   
   }
-  pthread_mutex_lock(&mutex);
   logFile << client_id << ": cached, expires at " << convertTimeToString(response.getExpiretime()) << std::endl;
-  pthread_mutex_unlock(&mutex);
 }
 
 bool Cache::getCachedResponse(const std::string & request, ServerResponse & response) {
