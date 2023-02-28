@@ -12,7 +12,7 @@ public:
   proxy(const char * myport) : port_num(myport) {}
   void run();
   static void * handle_client(void * arg);
-  static void handleConnect(int client_fd, int server_fd, ClientRequest * client_request);
+  static void handleConnect(int client_fd, int server_fd, int client_id);
   static void handleGet(ClientRequest * clinet_request, int client_fd, int server_fd);
   static void handlePOST(ClientRequest * client_request, int client_fd, int server_fd);
   static void revalidateCachedResponse(ClientRequest * client_request, int client_fd, int server_fd, ServerResponse & cached_response);

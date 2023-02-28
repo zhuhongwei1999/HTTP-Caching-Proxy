@@ -92,7 +92,7 @@ void * proxy::handle_client(void * arg) {
     const char * server_port = std::to_string(client_request->port).c_str();
     int remote_server_fd = connect_to_server(server_hostname, server_port);
     if (client_request->method == "CONNECT") {
-      handleConnect(client_fd, remote_server_fd, client_request);
+      handleConnect(client_fd, remote_server_fd, client_request->id);
       pthread_mutex_lock(&mutex);
       logFile << client_request->id << ": Tunnel closed" << std::endl;
       pthread_mutex_unlock(&mutex);
@@ -169,13 +169,11 @@ void proxy::handleGet(ClientRequest * client_request, int client_fd, int server_
   return;
 }
 
-void proxy::handleConnect(int client_fd, int server_fd, ClientRequest * client_request) {
-  // std::string response = "HTTP/1.1 200 OK\r\n\r\n";
-  std::string logResponse;// = "HTTP/1.1 200 OK"
-  // send(client_fd, response.c_str(), response.length(), 0);
-  // pthread_mutex_lock(&mutex);
-  // logFile<<client_request->id<<": Responding \""<<logResponse<<"\""<<std::endl;
-  // pthread_mutex_unlock(&mutex);
+void proxy::handleConnect(int client_fd, int server_fd, int client_id) {
+  std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+  std::string logResponse = "HTTP/1.1 200 OK";
+  send(client_fd, response.c_str(), response.length(), 0);
+  logFile<<client_id<<": Responding \""<<logResponse<<"\""<<endl;
   fd_set readfds;
   while (true) {
     FD_ZERO(&readfds);
@@ -186,31 +184,17 @@ void proxy::handleConnect(int client_fd, int server_fd, ClientRequest * client_r
     int len;
     for (int i = 0; i < 2; i++) {
       char message[65536] = {0};
-      if (FD_ISSET(fd[i], &readfds)) {//server i = 1
+      if (FD_ISSET(fd[i], &readfds)) {
         len = recv(fd[i], message, sizeof(message), 0);
-        if(i == 1){//server i = 1
-        std::string msg(message);
-        ServerResponse response(msg);
-        logResponse = response.response_line;
-        pthread_mutex_lock(&mutex);
-        logFile<<client_request->id<<": Received \""<<logResponse<<"\" from "<<client_request->host<<std::endl;
-        pthread_mutex_unlock(&mutex);
-        }
         if (len < 0) return;
-        else {//if len >= 0
-          int send_len = send(fd[1 - i], message, len, 0);
-          if (send_len <= 0){
-            return;
-          }else{
-            pthread_mutex_lock(&mutex);
-            logFile<<client_request->id<<": Responding \""<<logResponse<<"\""<<std::endl;
-            pthread_mutex_unlock(&mutex);
-          }
+        else {
+          if (send(fd[1 - i], message, len, 0) <= 0) return;
         }
       }
     }
   }
 }
+
 
 void proxy::handlePOST(ClientRequest * client_request, int client_fd, int server_fd) {
   int request_len = client_request->getContentLength();
@@ -335,34 +319,3 @@ int proxy::getContentLength(char * server_msg, int mes_len) {
   int content_len = std::stoi(response_msg.substr(pos + find_str.length(), end - pos - find_str.length()));
   return content_len - body_len;
 }
-
-// std::string proxy::handleChunkMessage(int server_fd, int buffer_size) {
-//   std::string response;
-//   bool chunked_encoding = true;
-//   while (chunked_encoding) {
-//     char buffer[buffer_size];
-//     int n = recv(server_fd, buffer, buffer_size, 0);
-//     std::string chunk_data(buffer, n);
-//     while (true) {
-//       size_t crlf_pos = chunk_data.find("\r\n");
-//       if (crlf_pos == std::string::npos) {
-//         break;
-//       }
-//       std::string chunk_size_str = chunk_data.substr(0, crlf_pos);
-//       std::stringstream size_stream(chunk_size_str);
-//       size_t chunk_size;
-//       size_stream >> std::hex >> chunk_size;
-//       if (chunk_size == 0) {
-//         chunked_encoding = false;
-//         break;
-//       }
-//       size_t chunk_data_pos = crlf_pos + 2;
-//       if (chunk_data_pos + chunk_size > chunk_data.size()) {
-//         break;
-//       }
-//       response.append(chunk_data.substr(chunk_data_pos, chunk_size));
-//       chunk_data = chunk_data.substr(chunk_data_pos + chunk_size + 2);
-//     }
-//   }
-//   return response;
-// }
