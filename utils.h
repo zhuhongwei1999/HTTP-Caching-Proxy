@@ -22,6 +22,6 @@ int connect_to_server(const char * hostname, const char * port);
 void sentback_request_page(ClientRequest client_request, std::fstream resource, int client_fd);
 void notFound404(int client_fd, int client_id);
 void badGatway502(int cliend_fd, int client_id);
-string getCurrentTime();
+std::string convertTimeToString(std::time_t time);//std::time_t time
 void checkLogFile(std::ofstream &logFile);
 

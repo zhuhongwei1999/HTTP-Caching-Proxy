@@ -23,7 +23,7 @@ void Cache::cacheResponse(const std::string & request, ServerResponse & response
     logFile << client_id << ": cached, but requires re-validation" << std::endl;  
     return;   
   }
-  logFile << client_id << ": cached, expires at " << response.getExpiretime() << std::endl;
+  logFile << client_id << ": cached, expires at " << convertTimeToString(response.getExpiretime()) << std::endl;
 }
 
 bool Cache::getCachedResponse(const std::string & request, ServerResponse & response) {

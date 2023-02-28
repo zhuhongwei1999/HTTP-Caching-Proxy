@@ -137,8 +137,9 @@ void badGateway502(int client_fd, int client_id){
   cout<<client_id<<": Responding \""<<reply<<"\""<<endl;
 }
 
-std::string getCurrentTime() {
-  std::time_t now = std::time(nullptr);
+std::string convertTimeToString(std::time_t now) {
+
+  // std::time_t now = std::time(nullptr);
   // Convert to a struct tm object
   std::tm* timeinfo = std::localtime(&now);
   // Format the time string
