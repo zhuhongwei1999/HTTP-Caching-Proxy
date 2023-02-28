@@ -1,8 +1,10 @@
 #include <unordered_map>
 #include <list>
 #include <iostream>
+#include <pthread.h>
 #include "server.h"
 #include "utils.h"
+
 using namespace std;
 
 #ifndef CACHE_H

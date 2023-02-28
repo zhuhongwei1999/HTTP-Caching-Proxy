@@ -1,5 +1,6 @@
 #!/bin/bash
 make clean
 make
-echo 'running http proxy ...'
-./main
+echo 'start running http proxy ...'
+./main &
+while true ; do continue ; done

@@ -1,9 +1,12 @@
 #include <unordered_map>
 #include <list>
 #include <iostream>
+#include <pthread.h>
 #include "server.h"
 #include "utils.h"
 using namespace std;
+
+extern pthread_mutex_t mutex;
 
 #ifndef CACHE_H
 #define CACHE_H

@@ -40,23 +40,29 @@ std::vector<std::string> ServerResponse::splitResponse(const std::string & s, co
 bool ServerResponse::isCacheable(int client_id, int &client_fd) {
   if (status_code != 200) {
     send(client_fd, &response_line, response_line.size(), 0);
+    pthread_mutex_lock(&mutex);
     logFile<<client_id<<": Responding \""<<response_line<<"\""<<endl;
+    pthread_mutex_unlock(&mutex);
     return false;
   }
   std::map<std::string, std::string>::iterator it;
   it = headers.find("Cache-Control");
   if (it != headers.end()) {
     if (it->second == "no-store"){
+      pthread_mutex_lock(&mutex);
       logFile<<client_id<<": NOTE Cache-Control: no-store"<<endl;
       logFile<<client_id<<": not cacheable because the response must not be cached in any form."<<endl;
+      pthread_mutex_unlock(&mutex);
       return false;
     }
     if (it->second.find("max-age=") != std::string::npos) {
       size_t eq_pos = it->second.find('=');
       std::string max_age = it->second.substr(eq_pos + 1);
       if (max_age == "0"){
+        pthread_mutex_lock(&mutex);
         logFile<<client_id<<": NOTE max-age=0"<<endl;
         logFile<<client_id<<": not cacheable because the the response should not be cached for client to ensure that it has the latest version."<<endl;
+        pthread_mutex_unlock(&mutex);
         return false;
       }
     }
@@ -65,7 +71,9 @@ bool ServerResponse::isCacheable(int client_id, int &client_fd) {
   if (it != headers.end()) {
     std::time_t expiration_time = parseDate(it->second);
     if (expiration_time <= std::time(NULL)) {
+      pthread_mutex_lock(&mutex);
       logFile<<client_id<<": not cacheable because the the response expired."<<endl;
+      pthread_mutex_unlock(&mutex);
       return false;
     }
   }

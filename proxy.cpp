@@ -60,16 +60,18 @@ void proxy::run() {
       error("Server accept client socket error!");
     }
     std::cout<<"Server accept client success.\n";
-    pthread_mutex_lock(&mutex);
+    // pthread_mutex_lock(&mutex);
     ClientRequest * client_request = new ClientRequest(id);
     id++;
     client_request->fd = client_fd;
-    pthread_mutex_unlock(&mutex);
+    // pthread_mutex_unlock(&mutex);
     pthread_t client_thread;
     pthread_create(&client_thread, NULL, handle_client, client_request);
     // handle_client(client_request);
   }
 }
+//TODO:every time writing a log; access cache (add, remove, replace)
+//GET: ridesharing , weibo
 
 void * proxy::handle_client(void * arg) {
   ClientRequest * client_request = (ClientRequest*)arg;
@@ -85,22 +87,26 @@ void * proxy::handle_client(void * arg) {
     client_request->parseRequest(buffer, buffer_len);
     client_request->printClientRequest();
     std::time_t now = std::time(nullptr);
+    pthread_mutex_lock(&mutex);
     logFile << client_request->id <<": \""<<client_request->headers[0]
             <<"\" from "<<client_request->port<<" @ "<<convertTimeToString(now)<<std::endl;
+    pthread_mutex_unlock(&mutex);
     const char * server_hostname = client_request->host.c_str();
     const char * server_port = std::to_string(client_request->port).c_str();
     int remote_server_fd = connect_to_server(server_hostname, server_port);
     if (client_request->method == "CONNECT") {
       handleConnect(client_fd, remote_server_fd, client_request->id);
+      pthread_mutex_lock(&mutex);
       logFile << client_request->id << ": Tunnel closed" << std::endl;
+      pthread_mutex_unlock(&mutex);
     } else if (client_request->method == "GET") {
-      pthread_mutex_lock(&mutex);
+      // pthread_mutex_lock(&mutex);
       handleGet(client_request, client_fd, remote_server_fd);
-      pthread_mutex_unlock(&mutex);
+      // pthread_mutex_unlock(&mutex);
     } else if (client_request->method == "POST") {
-      pthread_mutex_lock(&mutex);
+      // pthread_mutex_lock(&mutex);
       handlePOST(client_request, client_fd, remote_server_fd);
-      pthread_mutex_unlock(&mutex);
+      // pthread_mutex_unlock(&mutex);
     }
     close(client_fd);
     close(remote_server_fd);
@@ -110,19 +116,52 @@ void * proxy::handle_client(void * arg) {
 
 void proxy::handleGet(ClientRequest * client_request, int client_fd, int server_fd) {
   ServerResponse response;
+  pthread_mutex_lock(&mutex);
   bool in_cache = cache.getCachedResponse(client_request->headers[0], response);
+  pthread_mutex_unlock(&mutex);
   if (in_cache) {
     revalidateCachedResponse(client_request, client_fd, server_fd, response);
     return;
   }
   //logFile
+  pthread_mutex_lock(&mutex);
   logFile<<client_request->id<<": not in cache"<<std::endl;
+  pthread_mutex_unlock(&mutex);
   send(server_fd, client_request->msg.c_str(), strlen(client_request->msg.c_str()), 0);
   //logFile
+  pthread_mutex_lock(&mutex);
   logFile<<client_request->id<<": Requesting \""<<client_request->headers[0]<<"\" from "<<client_request->host<<std::endl;
+  pthread_mutex_unlock(&mutex);
   char buffer[65536] = {0};
   int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
-  // TODO:
+  int content_len = getLength(buffer, response_len);
+  if (content_len != -1) {
+    std::string msg = sendContentLen(server_fd, buffer, response_len, content_len);
+    if (msg.length() >= 10000000) {
+        std::vector<char> large_msg;
+        for (size_t i = 0; i < msg.length(); i++) {
+          large_msg.push_back(msg[i]);
+        }
+        const char * send_msg = large_msg.data();
+        send(client_fd, send_msg, msg.length(), 0);
+      }
+      else {
+        char send_response[msg.length() + 1];
+        msg = msg.append("\0");
+        strcpy(send_response, msg.c_str());
+        send(client_fd, send_response, msg.length(), 0);
+        pthread_mutex_lock(&mutex);
+        logFile<<client_request->id<<": ResponseMsg \""<<send_response<<"\""<<std::endl;//TODO:needs removal from logFile
+        pthread_mutex_unlock(&mutex);
+      }
+  }
+  else {//content_len = -1
+    std::string server_msg_str(buffer, response_len);
+    send(client_fd, buffer, sizeof(buffer), 0);
+  }
+  
+  //TODO:receiving policy
+
   
   std::string response_msg(buffer);
   ServerResponse server_response(response_msg);
@@ -132,17 +171,24 @@ void proxy::handleGet(ClientRequest * client_request, int client_fd, int server_
     std::string response_body;
     response_body = handleChunkMessage(server_fd, buffer, strlen(buffer));
     send(client_fd, response_msg.c_str(), response_msg.size(), 0);
+    pthread_mutex_lock(&mutex);
     logFile<<client_request->id<<": Responding \""<<server_response.response_line<<"\""<<std::endl;
+    pthread_mutex_unlock(&mutex);
   }
   else {//not chunked
     if (server_response.isCacheable(client_request->id, client_fd)) {
+      pthread_mutex_lock(&mutex);
       cache.cacheResponse(client_request->headers[0], server_response, client_request->id);
+      pthread_mutex_unlock(&mutex);
     }
+    pthread_mutex_lock(&mutex);
     logFile<<client_request->id<<": Responding \""<<server_response.response_line<<"\""<<std::endl;
-    
+    pthread_mutex_unlock(&mutex);
+
     int content_len = getLength(buffer, response_len);
-    logFile<<client_request->id<<": ResponseMsg \""<<buffer<<"\""<<std::endl;
-    send(client_fd, buffer, sizeof(buffer), 0);
+    
+    // send(client_fd, buffer, sizeof(buffer), 0);
+    //TODO: did not send back response to client
   }
   return;
 }
@@ -151,7 +197,9 @@ void proxy::handleConnect(int client_fd, int server_fd, int client_id) {
   std::string response = "HTTP/1.1 200 OK\r\n\r\n";
   std::string logResponse = "HTTP/1.1 200 OK";
   send(client_fd, response.c_str(), response.length(), 0);
+  pthread_mutex_lock(&mutex);
   logFile<<client_id<<": Responding \""<<logResponse<<"\""<<std::endl;
+  pthread_mutex_unlock(&mutex);
   fd_set readfds;
   while (true) {
     FD_ZERO(&readfds);
@@ -182,7 +230,10 @@ void proxy::handlePOST(ClientRequest * client_request, int client_fd, int server
     if (response_len != 0) {
       ServerResponse resp(buffer);
       send(client_fd, buffer, response_len, 0);
+      
+      pthread_mutex_lock(&mutex);
       logFile<<client_request->id<<": Responding \""<<resp.response_line<<"\""<<std::endl;
+      pthread_mutex_unlock(&mutex);
       std::cout << "Post Suceess!" << std::endl;
     }
     else {
@@ -200,11 +251,15 @@ void proxy::revalidateCachedResponse(ClientRequest * client_request, int client_
   if (is_expired || is_nocache) {
     // The cached response has expired, revalidate it with the server.
     if (is_nocache) {
+      pthread_mutex_lock(&mutex);
       logFile << client_request->id << ": in cache, requires validation " << endl;//can expires use here?
+      pthread_mutex_unlock(&mutex);
     }
     else if (is_expired) {
       //auto it = cached_response.headers.find("Expires");
+      pthread_mutex_lock(&mutex);
       logFile<<client_request->id<<": in cache, but expired at "<<convertTimeToString(cached_response.parseExpiretime())<<endl;
+      pthread_mutex_unlock(&mutex);
     }
    //can expires use here?
     ClientRequest revalidation_request = *client_request;
@@ -216,32 +271,46 @@ void proxy::revalidateCachedResponse(ClientRequest * client_request, int client_
     // Send the revalidation request to the server.
     send(server_fd, revalidation_request.msg.c_str(), strlen(revalidation_request.msg.c_str()), 0);
     //logFile
+    pthread_mutex_lock(&mutex);
     logFile<<client_request->id<<": Requesting \""<<client_request->headers[0]<<"\" from "<<client_request->host<<std::endl;
+    pthread_mutex_unlock(&mutex);
     char buffer[65536] = {0};
     int response_len = recv(server_fd, buffer, sizeof(buffer), 0);
     std::string response_msg(buffer);
     ServerResponse revalidation_response(response_msg);
     //logFile
+    pthread_mutex_lock(&mutex);
     logFile<<client_request->id<<": Received \""<<revalidation_response.response_line<<"\" from "<<client_request->host<<std::endl;
+    pthread_mutex_unlock(&mutex);
     if (revalidation_response.status_code == 304) {
       // The cached response is still valid.
       send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
+      pthread_mutex_lock(&mutex);
       logFile<<client_request->id<<": Responding \""<<revalidation_response.response_line<<"\""<<std::endl;
+      pthread_mutex_unlock(&mutex);
     } else {
       // The cached response is not valid, replace it with the new response.
       //std::cout << "Test: cached response is not valid, replacing" << std::endl;
       //cout<<client_request.id<<": in cache, requires validation"<<endl;
       send(client_fd, response_msg.c_str(), response_msg.size(), 0);
+      pthread_mutex_lock(&mutex);
       logFile<<client_request->id<<": Responding \""<<revalidation_response.response_line<<"\""<<std::endl;
-      cached_response = revalidation_response;
+      pthread_mutex_unlock(&mutex);
+      pthread_mutex_lock(&mutex);
+      cached_response = revalidation_response;//replace cache
+      pthread_mutex_unlock(&mutex);
     }
   } else {
     // The cached response is still valid, return it to the client.
     //std::cout << "cached response is still valid" << std::endl;
+    pthread_mutex_lock(&mutex);
     logFile<<client_request->id<<": in cache, valid"<<std::endl;
+    pthread_mutex_unlock(&mutex);
     send(client_fd, cached_response.message.c_str(), strlen(cached_response.message.c_str()), 0);
     //cout<<"Test2:"<<cached_response.response_line<<endl;
+    pthread_mutex_lock(&mutex);
     logFile<<client_request->id<<": Responding \""<<cached_response.response_line.c_str()<<"\""<<std::endl;
+    pthread_mutex_unlock(&mutex);
   }
 }
 

@@ -6,7 +6,11 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <pthread.h>
 extern std::ofstream logFile;
+
+
+extern pthread_mutex_t mutex;
 
 #ifndef SERVER_RESPONSE_H
 #define SERVER_RESPONSE_H
