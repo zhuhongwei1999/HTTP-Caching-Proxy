@@ -1,0 +1,64 @@
+===================================================================================================================
+                TEST CASES FOR GET
+===================================================================================================================
+
+TestCase: Chunked
+http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
+Result:
+0: "GET http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx HTTP/1.1" from 80 @ Tue Feb 28 14:36:43 2023
+0: not in cache
+0: Requesting "GET http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx HTTP/1.1" from www.httpwatch.com
+0: Received "HTTP/1.1 200 OK" from www.httpwatch.com
+0: not cacheable because the response is chunked
+0: Responding "HTTP/1.1 200 OK"
+
+TestCase: max-age=0
+http://www.httpwatch.com/favicon.ico
+Result:
+2: "GET http://www.httpwatch.com/favicon.ico HTTP/1.1" from 80 @ Tue Feb 28 15:34:27 2023
+2: not in cache
+2: Requesting "GET http://www.httpwatch.com/favicon.ico HTTP/1.1" from www.httpwatch.com
+2: Received "HTTP/1.1 200 OK" from www.httpwatch.com
+2: NOTE max-age=0
+2: not cacheable because the the response should not be cached for client to ensure that it has the latest version.
+2: Responding "HTTP/1.1 200 OK"
+
+TestCase: error 301 Moved Permanently
+http://www.artsci.utoronto.ca/futurestudents
+Result:
+0: "GET http://www.artsci.utoronto.ca/futurestudents HTTP/1.1" from 80 @ Tue Feb 28 15:20:21 2023
+0: not in cache
+0: Requesting "GET http://www.artsci.utoronto.ca/futurestudents HTTP/1.1" from www.artsci.utoronto.ca
+0: Received "HTTP/1.1 301 Moved Permanently" from www.artsci.utoronto.ca
+0: Responding "HTTP/1.1 301 Moved Permanently"
+
+===================================================================================================================
+                TEST CASES FOR CONNECT
+===================================================================================================================
+
+TestCase CONNECT
+https://www.youtube.com/
+1: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 14:58:40 2023
+1: Tunnel closed
+
+===================================================================================================================
+                TEST CASES FOR POST
+===================================================================================================================
+
+TestCase POST
+http://httpbin.org/forms/post
+0: "GET http://httpbin.org/forms/post HTTP/1.1" from 80 @ Tue Feb 28 15:04:00 2023
+0: not in cache
+0: Requesting "GET http://httpbin.org/forms/post HTTP/1.1" from httpbin.org
+0: Received "HTTP/1.1 200 OK" from httpbin.org
+0: cached, expires at Tue Feb 28 20:03:59 2023
+0: Responding "HTTP/1.1 200 OK"
+1: "GET http://httpbin.org/favicon.ico HTTP/1.1" from 80 @ Tue Feb 28 15:04:00 2023
+1: not in cache
+1: Requesting "GET http://httpbin.org/favicon.ico HTTP/1.1" from httpbin.org
+1: Received "HTTP/1.1 404 NOT FOUND" from httpbin.org
+1: Responding "HTTP/1.1 404 NOT FOUND"
+1: Responding "HTTP/1.1 404 NOT FOUND"
+2: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 15:04:18 2023
+2: Received "HTTP/1.1 200 OK" from httpbin.org
+2: Responding "HTTP/1.1 200 OK"

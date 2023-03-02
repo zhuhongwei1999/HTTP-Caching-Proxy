@@ -1,0 +1,51 @@
+Cache policy:
+Please specify your cache policy (e.g. cache size, replacement policy, when to clean expired reponse):
+    cache structure:
+        Map: RequestHeader -> ResponseObject
+    cache size: 
+        20
+    replacement policy: 
+        When new request is finding an corresponding cached response but found it expired, 
+        it will revalidate a new response from the server ans then replace the old expired one.
+        Use LRU caching policy to do replacement.
+
+External failure:
+    a. Invalid request: The request will be checked by the respoonse returned by sending it to server by proxy.
+       Responding 400 Bad Request to client.
+    b. If it contacts the server and receives a	corrupted response, a 502 Bad Getway will be send in response to client.
+
+Exception guarantees
+    a. Server estabilishment: 
+        Server is established through getaddrinfo, build socket, bind and listen, if any of these return values does not meet with expectation,
+        error massage is shown and the program exit with failure.
+    b. Message accepting and receiving:
+        The proxy receives and send request and response by using recv and send, if error happens,
+        error massage is shown and the program exit with failure.
+
+//////////
+1. When doing a GET requst for "http://httpbin.org/forms/post", it can occasionally obtain the whole pages.
+   The reasons leading to this is ambiguous as it sometimes fail but sometimes success.
+   Looking at the request after accessing this url, it can be sure that the request is properly made.
+   However the response is not in full scale.
+   Solution: Try using a while loop to receive the whole content.
+             Compare the content length with the received length.
+             Looking for "\r\n\r\n" indicating the ending.
+
+2. How to test a GET request as so many advanced webpages only support https as CONNECT?
+   The webpages developed in hw1 would be a great example test.
+   Using a request generation tool : "httpbin.org".
+
+3. Why there are so many un_recognized access to web pages when tesing https://youtube.com in foxfire browser?
+   Those are related to the browser, which are automatically generated as requesting to CONNECT to a web page.
+
+4. What if a user A is accessing cache to get a valid response while user B's request wants to modify that cache?
+   It would lead to serious problems relating to race condition.
+   This danger should be properly handled by a mutex lock to prevent the simutaneous write and read from the cache.
+
+5. How to parse a response and make it a class with all the information well categorized?
+   Make split function to put every element split by “delim” (delim can be “\r\n”, “ “), and put the splited elements in to vectors for later use.
+   For this, first split by \r\n to get every line, and then split the first line by “ “, then the remaining lines as headers by spiting by “:”.
+   This split lines end by “\r\n\r\n”, and following that is the body content.
+
+
+
