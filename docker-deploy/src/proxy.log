@@ -1,71 +1,139 @@
 This is a test log message.
-0: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-1: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-2: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-3: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-4: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-5: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-6: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-7: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-8: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-9: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:40:54 2023
-10: "CONNECT www.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:13 2023
-10: Responding "HTTP/1.1 200 OK"
-13: "CONNECT adservice.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:14 2023
-13: Responding "HTTP/1.1 200 OK"
-14: "CONNECT googleads.g.doubleclick.net:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:14 2023
-14: Responding "HTTP/1.1 200 OK"
-15: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:17 2023
-15: Responding "HTTP/1.1 200 OK"
-16: "CONNECT i.ytimg.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:18 2023
-16: Responding "HTTP/1.1 200 OK"
-18: "CONNECT yt3.ggpht.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:19 2023
-18: Responding "HTTP/1.1 200 OK"
-20: "CONNECT jnn-pa.googleapis.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:19 2023
+0: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:17 2023
+0: Responding "HTTP/1.1 200 OK"
+1: "CONNECT i.ytimg.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:18 2023
+1: Responding "HTTP/1.1 200 OK"
+3: "CONNECT googleads.g.doubleclick.net:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:18 2023
+3: Responding "HTTP/1.1 200 OK"
+4: "CONNECT www.gstatic.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:18 2023
+5: "CONNECT www.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:18 2023
+4: Responding "HTTP/1.1 200 OK"
+5: Responding "HTTP/1.1 200 OK"
+6: "CONNECT yt3.ggpht.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:18 2023
+6: Responding "HTTP/1.1 200 OK"
+7: "CONNECT static.doubleclick.net:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:19 2023
+8: "CONNECT jnn-pa.googleapis.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:19 2023
+7: Responding "HTTP/1.1 200 OK"
+8: Responding "HTTP/1.1 200 OK"
+9: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+10: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+11: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+12: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+13: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+14: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+15: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+16: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+17: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+18: "GET http://vcm-30687.vm.duke.edu:8000/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:21 2023
+20: "CONNECT safebrowsing.googleapis.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:24 2023
 20: Responding "HTTP/1.1 200 OK"
-22: "CONNECT incoming.telemetry.mozilla.org:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:35 2023
+21: "CONNECT adservice.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:24 2023
+21: Responding "HTTP/1.1 200 OK"
+20: Tunnel closed
+22: "GET http://httpbin.org/forms/post HTTP/1.1" from 80 @ Tue Feb 28 22:45:27 2023
+22: not in cache
+22: Requesting "GET http://httpbin.org/forms/post HTTP/1.1" from httpbin.org
+22: Received "HTTP/1.1 200 OK" from httpbin.org
+22: cached, expires at Tue Feb 28 22:45:26 2023
 22: Responding "HTTP/1.1 200 OK"
-23: "CONNECT contile-images.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:35 2023
-24: "CONNECT img-getpocket.cdn.mozilla.net:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:35 2023
-23: Responding "HTTP/1.1 200 OK"
+23: "GET http://httpbin.org/favicon.ico HTTP/1.1" from 80 @ Tue Feb 28 22:45:27 2023
+23: not in cache
+23: Requesting "GET http://httpbin.org/favicon.ico HTTP/1.1" from httpbin.org
+23: Received "HTTP/1.1 404 NOT FOUND" from httpbin.org
+23: Responding "HTTP/1.1 404 NOT FOUND"
+23: Responding "HTTP/1.1 404 NOT FOUND"
+24: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:45:30 2023
+24: Received "HTTP/1.1 200 OK" from httpbin.org
 24: Responding "HTTP/1.1 200 OK"
-25: "GET http://httpbin.org/forms/post HTTP/1.1" from 80 @ Tue Feb 28 22:41:36 2023
-25: not in cache
-25: Requesting "GET http://httpbin.org/forms/post HTTP/1.1" from httpbin.org
-25: Received "HTTP/1.1 200 OK" from httpbin.org
-25: cached, expires at Tue Feb 28 22:41:35 2023
+25: "CONNECT play.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:50 2023
 25: Responding "HTTP/1.1 200 OK"
-26: "CONNECT incoming.telemetry.mozilla.org:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:36 2023
+26: "CONNECT push.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:50 2023
 26: Responding "HTTP/1.1 200 OK"
-27: "GET http://httpbin.org/favicon.ico HTTP/1.1" from 80 @ Tue Feb 28 22:41:36 2023
-27: not in cache
-27: Requesting "GET http://httpbin.org/favicon.ico HTTP/1.1" from httpbin.org
-27: Received "HTTP/1.1 404 NOT FOUND" from httpbin.org
-27: Responding "HTTP/1.1 404 NOT FOUND"
-27: Responding "HTTP/1.1 404 NOT FOUND"
-28: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:41:40 2023
-28: Received "HTTP/1.1 200 OK" from httpbin.org
+27: "POST http://r3.o.lencr.org/ HTTP/1.1" from 80 @ Tue Feb 28 22:45:50 2023
+27: Received "HTTP/1.1 200 OK" from r3.o.lencr.org
+27: Responding "HTTP/1.1 200 OK"
+28: "CONNECT firefox.settings.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:51 2023
 28: Responding "HTTP/1.1 200 OK"
-29: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:41:40 2023
-29: Received "HTTP/1.1 200 OK" from httpbin.org
+29: "CONNECT content-signature-2.cdn.mozilla.net:443 HTTP/1.1" from 443 @ Tue Feb 28 22:45:51 2023
 29: Responding "HTTP/1.1 200 OK"
-30: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:41:41 2023
-30: Received "HTTP/1.1 200 OK" from httpbin.org
-30: Responding "HTTP/1.1 200 OK"
-31: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:41:42 2023
-31: Received "HTTP/1.1 200 OK" from httpbin.org
+4: Tunnel closed
+8: Tunnel closed
+6: Tunnel closed
+7: Tunnel closed
+1: Tunnel closed
+21: Tunnel closed
+5: Tunnel closed
+31: "CONNECT classify-client.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:48:38 2023
 31: Responding "HTTP/1.1 200 OK"
-32: "CONNECT play.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:50 2023
+32: "CONNECT content-signature-2.cdn.mozilla.net:443 HTTP/1.1" from 443 @ Tue Feb 28 22:48:38 2023
 32: Responding "HTTP/1.1 200 OK"
-33: "CONNECT www.example.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:41:50 2023
+25: Tunnel closed
+28: Tunnel closed
+29: Tunnel closed
+3: Tunnel closed
+0: Tunnel closed
+33: "CONNECT contile.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:51:21 2023
 33: Responding "HTTP/1.1 200 OK"
+31: Tunnel closed
+32: Tunnel closed
 33: Tunnel closed
-34: "GET http://www.example.com/ HTTP/1.1" from 80 @ Tue Feb 28 22:41:58 2023
-34: not in cache
-34: Requesting "GET http://www.example.com/ HTTP/1.1" from www.example.com
-34: Received "HTTP/1.1 200 OK" from www.example.com
-34: cached, expires at Tue Mar 07 22:41:58 2023
+34: "CONNECT www.youtube.com:443 HTTP/1.1" from 443 @ Tue Feb 28 22:56:50 2023
 34: Responding "HTTP/1.1 200 OK"
-35: "GET http://www.example.com/ HTTP/1.1" from 80 @ Tue Feb 28 22:42:07 2023
-35: in cache, valid
+35: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:57:30 2023
+35: Received "HTTP/1.1 200 OK" from httpbin.org
 35: Responding "HTTP/1.1 200 OK"
+36: "GET http://httpbin.org/favicon.ico HTTP/1.1" from 80 @ Tue Feb 28 22:57:32 2023
+36: not in cache
+36: Requesting "GET http://httpbin.org/favicon.ico HTTP/1.1" from httpbin.org
+36: Received "HTTP/1.1 404 NOT FOUND" from httpbin.org
+36: Responding "HTTP/1.1 404 NOT FOUND"
+36: Responding "HTTP/1.1 404 NOT FOUND"
+37: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:57:50 2023
+37: Received "HTTP/1.1 200 OK" from httpbin.org
+37: Responding "HTTP/1.1 200 OK"
+38: "POST http://httpbin.org/post HTTP/1.1" from 80 @ Tue Feb 28 22:57:53 2023
+38: Received "HTTP/1.1 200 OK" from httpbin.org
+38: Responding "HTTP/1.1 200 OK"
+39: "CONNECT incoming.telemetry.mozilla.org:443 HTTP/1.1" from 443 @ Tue Feb 28 22:57:53 2023
+39: Responding "HTTP/1.1 200 OK"
+34: Tunnel closed
+39: Tunnel closed
+40: "CONNECT play.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 23:00:50 2023
+40: Responding "HTTP/1.1 200 OK"
+41: "CONNECT spocs.getpocket.com:443 HTTP/1.1" from 443 @ Tue Feb 28 23:01:21 2023
+41: Responding "HTTP/1.1 200 OK"
+42: "CONNECT img-getpocket.cdn.mozilla.net:443 HTTP/1.1" from 443 @ Tue Feb 28 23:01:22 2023
+42: Responding "HTTP/1.1 200 OK"
+43: "GET http://detectportal.firefox.com/canonical.html HTTP/1.1" from 80 @ Tue Feb 28 23:02:08 2023
+44: "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from 80 @ Tue Feb 28 23:02:08 2023
+44: not in cache
+44: Requesting "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from detectportal.firefox.com
+43: not in cache
+43: Requesting "GET http://detectportal.firefox.com/canonical.html HTTP/1.1" from detectportal.firefox.com
+44: Received "HTTP/1.1 200 OK" from detectportal.firefox.com
+44: cached, expires at Tue Feb 28 10:12:25 2023
+44: Responding "HTTP/1.1 200 OK"
+43: Received "HTTP/1.1 200 OK" from detectportal.firefox.com
+43: cached, expires at Tue Feb 28 07:20:56 2023
+43: Responding "HTTP/1.1 200 OK"
+45: "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from 80 @ Tue Feb 28 23:02:09 2023
+45: in cache, but expired at Wed Dec 31 23:59:59 1969
+45: Requesting "GET http://detectportal.firefox.com/success.txt?ipv4 HTTP/1.1" from detectportal.firefox.com
+45: Received "HTTP/1.1 200 OK" from detectportal.firefox.com
+45: Responding "HTTP/1.1 200 OK"
+46: "CONNECT incoming.telemetry.mozilla.org:443 HTTP/1.1" from 443 @ Tue Feb 28 23:02:20 2023
+46: Responding "HTTP/1.1 200 OK"
+40: Tunnel closed
+42: Tunnel closed
+47: "CONNECT firefox.settings.services.mozilla.com:443 HTTP/1.1" from 443 @ Tue Feb 28 23:03:15 2023
+47: Responding "HTTP/1.1 200 OK"
+48: "CONNECT www.google.com:443 HTTP/1.1" from 443 @ Tue Feb 28 23:03:17 2023
+48: Responding "HTTP/1.1 200 OK"
+49: "CONNECT incoming.telemetry.mozilla.org:443 HTTP/1.1" from 443 @ Tue Feb 28 23:03:18 2023
+49: Responding "HTTP/1.1 200 OK"
+41: Tunnel closed
+49: Tunnel closed
+47: Tunnel closed
+46: Tunnel closed
+26: Tunnel closed
+48: Tunnel closed
